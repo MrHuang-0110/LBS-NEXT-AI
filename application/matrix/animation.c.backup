@@ -1,0 +1,347 @@
+#include "animation.h"
+#include "led_matrix.h"
+#include "tm1640_config.h"
+#include <string.h>
+
+// 系统滴答函数（用户需要提供，默认为HAL_GetTick）
+#ifndef ANIMATION_GET_TICK
+#include "stm32f1xx_hal.h"
+#define ANIMATION_GET_TICK() HAL_GetTick()
+#endif
+
+// 蜂鸣器回调函数指针
+static BuzzerCallback buzzer_power_on_cb = NULL;
+static BuzzerCallback buzzer_power_off_cb = NULL;
+
+// 当前动画控制
+static AnimationControl current_animation = {0};
+
+// 自定义动画帧数据
+static uint8_t *custom_frame_data = NULL;
+static uint8_t custom_frame_count = 0;
+static uint8_t custom_frame_width = 0;
+static uint8_t custom_frame_height = 0;
+
+// 开机动画帧数据（7x5，每帧一个位图）
+// 帧数：5帧（从中心向外扩散）
+static const uint8_t power_on_frames[5][7] = {
+    // 帧1：中心点
+    {0b00000,
+     0b00000,
+     0b00100,
+     0b00000,
+     0b00000,
+     0b00000,
+     0b00000},
+    // 帧2：小十字
+    {0b00000,
+     0b00100,
+     0b01110,
+     0b00100,
+     0b00000,
+     0b00000,
+     0b00000},
+    // 帧3：大十字
+    {0b00100,
+     0b01110,
+     0b11111,
+     0b01110,
+     0b00100,
+     0b00000,
+     0b00000},
+    // 帧4：填充中间
+    {0b01110,
+     0b11111,
+     0b11111,
+     0b11111,
+     0b01110,
+     0b00000,
+     0b00000},
+    // 帧5：全亮
+    {0b11111,
+     0b11111,
+     0b11111,
+     0b11111,
+     0b11111,
+     0b11111,
+     0b11111}
+};
+
+// 关机动画帧数据（7x5，从外向内收缩）
+static const uint8_t power_off_frames[5][7] = {
+    // 帧1：全亮
+    {0b11111,
+     0b11111,
+     0b11111,
+     0b11111,
+     0b11111,
+     0b11111,
+     0b11111},
+    // 帧2：去掉边框
+    {0b11111,
+     0b10001,
+     0b10001,
+     0b10001,
+     0b10001,
+     0b10001,
+     0b11111},
+    // 帧3：更小
+    {0b00000,
+     0b01110,
+     0b01110,
+     0b01110,
+     0b01110,
+     0b01110,
+     0b00000},
+    // 帧4：小十字
+    {0b00000,
+     0b00100,
+     0b01110,
+     0b00100,
+     0b00000,
+     0b00000,
+     0b00000},
+    // 帧5：中心点
+    {0b00000,
+     0b00000,
+     0b00100,
+     0b00000,
+     0b00000,
+     0b00000,
+     0b00000}
+};
+
+// 将位图数据加载到帧缓冲区
+static void load_frame_to_buffer(const uint8_t frame[MATRIX_ROWS]) {
+    led_matrix_clear_all();
+
+    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+        uint8_t row_data = frame[row];
+        for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+            if (row_data & (1 << (MATRIX_COLS - 1 - col))) {  // 注意位顺序，最高位对应最左边
+                led_matrix_set_pixel(row, col, true);
+            }
+        }
+    }
+
+    led_matrix_refresh();
+}
+
+// 初始化动画系统
+void animation_init(void) {
+    memset(&current_animation, 0, sizeof(current_animation));
+    current_animation.state = ANIMATION_STOPPED;
+}
+
+// 注册蜂鸣器回调
+void animation_register_buzzer_callback(BuzzerCallback power_on_cb, BuzzerCallback power_off_cb) {
+    buzzer_power_on_cb = power_on_cb;
+    buzzer_power_off_cb = power_off_cb;
+}
+
+// 开始动画
+void animation_start(AnimationType type, AnimationDirection direction, uint32_t duration_ms) {
+    if (current_animation.state == ANIMATION_RUNNING) {
+        animation_stop();
+    }
+
+    current_animation.type = type;
+    current_animation.direction = direction;
+    current_animation.duration_ms = duration_ms;
+    current_animation.start_time = ANIMATION_GET_TICK();
+    current_animation.state = ANIMATION_RUNNING;
+    current_animation.current_frame = 0;
+    current_animation.repeat = false;
+    current_animation.repeat_counter = 0;
+
+    // 根据动画类型设置帧参数
+    switch (type) {
+        case ANIMATION_POWER_ON:
+            current_animation.total_frames = 5;
+            current_animation.frame_interval_ms = duration_ms / 5;
+            if (buzzer_power_on_cb != NULL) {
+                buzzer_power_on_cb();
+            }
+            break;
+        case ANIMATION_POWER_OFF:
+            current_animation.total_frames = 5;
+            current_animation.frame_interval_ms = duration_ms / 5;
+            if (buzzer_power_off_cb != NULL) {
+                buzzer_power_off_cb();
+            }
+            break;
+        case ANIMATION_HORIZONTAL_SCROLL:
+            current_animation.total_frames = MATRIX_COLS * 2; // 粗略估计
+            current_animation.frame_interval_ms = 100; // 默认100ms每帧
+            break;
+        case ANIMATION_VERTICAL_SCROLL:
+            current_animation.total_frames = MATRIX_ROWS * 2;
+            current_animation.frame_interval_ms = 100;
+            break;
+        case ANIMATION_UI_TRANSITION:
+            current_animation.total_frames = 10; // 10帧过渡
+            current_animation.frame_interval_ms = duration_ms / 10;
+            break;
+        default:
+            current_animation.total_frames = 1;
+            current_animation.frame_interval_ms = duration_ms;
+            break;
+    }
+
+    // 立即显示第一帧
+    animation_update();
+}
+
+// 停止动画
+void animation_stop(void) {
+    current_animation.state = ANIMATION_STOPPED;
+    led_matrix_clear_all();
+    led_matrix_refresh();
+}
+
+// 暂停动画
+void animation_pause(void) {
+    if (current_animation.state == ANIMATION_RUNNING) {
+        current_animation.state = ANIMATION_PAUSED;
+    }
+}
+
+// 恢复动画
+void animation_resume(void) {
+    if (current_animation.state == ANIMATION_PAUSED) {
+        current_animation.state = ANIMATION_RUNNING;
+        // 调整开始时间，使得暂停时间不影响动画
+        uint32_t paused_duration = ANIMATION_GET_TICK() - current_animation.start_time;
+        current_animation.start_time += paused_duration;
+    }
+}
+
+// 检查是否正在运行
+bool animation_is_running(void) {
+    return current_animation.state == ANIMATION_RUNNING;
+}
+
+// 获取动画状态
+AnimationState animation_get_state(void) {
+    return current_animation.state;
+}
+
+// 开机动画
+void animation_power_on(void) {
+    animation_start(ANIMATION_POWER_ON, DIRECTION_LEFT, POWER_ON_ANIMATION_DURATION_MS);
+}
+
+// 关机动画
+void animation_power_off(void) {
+    animation_start(ANIMATION_POWER_OFF, DIRECTION_LEFT, POWER_OFF_ANIMATION_DURATION_MS);
+}
+
+// 横屏滚动
+void animation_horizontal_scroll(AnimationDirection direction, uint32_t speed_ms) {
+    animation_start(ANIMATION_HORIZONTAL_SCROLL, direction, speed_ms * MATRIX_COLS);
+}
+
+// 竖屏滚动
+void animation_vertical_scroll(AnimationDirection direction, uint32_t speed_ms) {
+    animation_start(ANIMATION_VERTICAL_SCROLL, direction, speed_ms * MATRIX_ROWS);
+}
+
+// UI切换动画
+void animation_ui_transition(AnimationDirection direction, uint32_t duration_ms) {
+    animation_start(ANIMATION_UI_TRANSITION, direction, duration_ms);
+}
+
+// 设置自定义动画帧
+void animation_set_custom_frames(uint8_t *frame_data, uint8_t frame_count, uint8_t frame_width, uint8_t frame_height) {
+    custom_frame_data = frame_data;
+    custom_frame_count = frame_count;
+    custom_frame_width = frame_width;
+    custom_frame_height = frame_height;
+}
+
+// 开始自定义动画
+void animation_start_custom(AnimationDirection direction, uint32_t duration_ms, bool repeat) {
+    if (custom_frame_data == NULL || custom_frame_count == 0) return;
+
+    if (current_animation.state == ANIMATION_RUNNING) {
+        animation_stop();
+    }
+
+    current_animation.type = ANIMATION_CUSTOM;
+    current_animation.direction = direction;
+    current_animation.duration_ms = duration_ms;
+    current_animation.start_time = ANIMATION_GET_TICK();
+    current_animation.state = ANIMATION_RUNNING;
+    current_animation.current_frame = 0;
+    current_animation.total_frames = custom_frame_count;
+    current_animation.frame_interval_ms = duration_ms / custom_frame_count;
+    current_animation.repeat = repeat;
+    current_animation.repeat_counter = 0;
+
+    animation_update();
+}
+
+// 动画帧更新
+void animation_update(void) {
+    if (current_animation.state != ANIMATION_RUNNING) {
+        return;
+    }
+
+    uint32_t current_time = ANIMATION_GET_TICK();
+    uint32_t elapsed = current_time - current_animation.start_time;
+
+    // 计算当前帧
+    uint8_t frame = (elapsed / current_animation.frame_interval_ms) % current_animation.total_frames;
+
+    // 如果帧发生变化，更新显示
+    if (frame != current_animation.current_frame) {
+        current_animation.current_frame = frame;
+
+        // 根据动画类型显示相应帧
+        switch (current_animation.type) {
+            case ANIMATION_POWER_ON:
+                if (frame < 5) {
+                    load_frame_to_buffer(power_on_frames[frame]);
+                }
+                break;
+            case ANIMATION_POWER_OFF:
+                if (frame < 5) {
+                    load_frame_to_buffer(power_off_frames[frame]);
+                }
+                break;
+            case ANIMATION_HORIZONTAL_SCROLL:
+                // 横屏滚动需要在外部处理，这里只管理状态
+                break;
+            case ANIMATION_VERTICAL_SCROLL:
+                // 竖屏滚动需要在外部处理
+                break;
+            case ANIMATION_UI_TRANSITION:
+                // UI切换需要外部处理
+                break;
+            case ANIMATION_CUSTOM:
+                // 自定义动画：需要外部处理帧显示
+                break;
+            default:
+                break;
+        }
+
+        // 检查动画是否完成
+        if (frame == current_animation.total_frames - 1) {
+            if (current_animation.repeat) {
+                // 重复动画：重置开始时间
+                current_animation.start_time = current_time;
+                current_animation.repeat_counter++;
+            } else {
+                // 动画完成
+                current_animation.state = ANIMATION_COMPLETED;
+            }
+        }
+    }
+
+    // 检查总持续时间是否结束
+    if (elapsed >= current_animation.duration_ms && !current_animation.repeat) {
+        current_animation.state = ANIMATION_COMPLETED;
+        led_matrix_clear_all();
+        led_matrix_refresh();
+    }
+}

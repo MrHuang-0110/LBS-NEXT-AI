@@ -1,0 +1,10 @@
+import PikaStdLib
+import _motor
+import _os
+import _ultrasion
+import _color
+import _key
+import _touch
+import _matrix
+import _random
+import _beep

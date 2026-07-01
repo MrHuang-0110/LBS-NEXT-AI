@@ -1,0 +1,6 @@
+# Keil 编译输出目录(44MB,328 个中间文件)
+Output/
+
+# Python 字节码缓存
+__pycache__/
+*.pyc

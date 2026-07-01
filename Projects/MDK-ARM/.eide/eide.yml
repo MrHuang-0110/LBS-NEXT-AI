@@ -1,0 +1,366 @@
+version: "4.1"
+name: atk_f103
+type: ARM
+deviceName: null
+packDir: null
+srcDirs: []
+virtualFolder:
+  name: <virtual_root>
+  files: []
+  folders:
+    - name: Startup
+      files:
+        - path: ../../Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/arm/startup_stm32f103xe.s
+      folders: []
+    - name: application
+      files:
+        - path: ../../application/beep/beep.c
+        - path: ../../application/motor/motor.c
+        - path: ../../application/blue/blue.c
+        - path: ../../application/color/color.c
+        - path: ../../application/touch/touch.c
+        - path: ../../application/ultrasion/ultrasion.c
+      folders: []
+    - name: WillAi
+      files: []
+      folders:
+        - name: BSP
+          files:
+            - path: ../../Drivers/BSP/LED/led.c
+            - path: ../../Drivers/BSP/LED/drv_led.c
+            - path: ../../Drivers/BSP/drv_flash_storage.c
+            - path: ../../Drivers/BSP/TIMER/btim.c
+            - path: ../../Drivers/BSP/KEY/key.c
+            - path: ../../Drivers/BSP/STMFLASH/stmflash.c
+            - path: ../../Drivers/BSP/ADC/adc.c
+            - path: ../../Drivers/BSP/IR/drv_ir_reflect.c
+            - path: ../../Drivers/BSP/IIC/iic.c
+            - path: ../../Drivers/BSP/SPI/spi.c
+            - path: ../../Drivers/BSP/WDG/wdg.c
+          folders: []
+        - name: Middle
+          files:
+            - path: ../../Middlewares/event_manager/event_manager.c
+            - path: ../../Middlewares/malloc/malloc.c
+            - path: ../../Middlewares/protocol/protocol.c
+            - path: ../../Middlewares/lbs_file_manager/lbsfilemanager.c
+            - path: ../../Middlewares/deviceIdentify/deviceIdentify.c
+            - path: ../../Middlewares/ymodem/drv_mem.c
+            - path: ../../Middlewares/ymodem/drv_comm.c
+            - path: ../../Middlewares/ymodem/drv_ymodem.c
+            - path: ../../Middlewares/stubs/matrix_port_stub.c
+            - path: ../../Middlewares/stubs/_matrix_stub.c
+            - path: ../../Middlewares/monitor/json-maker.c
+            - path: ../../Middlewares/monitor/monitor.c
+            - path: ../../Middlewares/bat_manager/bat_manager.c
+          folders: []
+    - name: User
+      files:
+        - path: ../../Users/main.c
+        - path: ../../Users/app_boot_param.c
+        - path: ../../Users/app_pika_runtime.c
+        - path: ../../Users/app_cmd.c
+        - path: ../../Users/stm32f1xx_it.c
+        - path: ../../Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
+        - path: ../../Users/pika_config.c
+        - path: ../../Users/pika_config.h
+      folders: []
+    - name: Drivers
+      files: []
+      folders:
+        - name: SYSTEM
+          files:
+            - path: ../../Drivers/SYSTEM/sys/sys.c
+            - path: ../../Drivers/SYSTEM/delay/delay.c
+            - path: ../../Drivers/SYSTEM/usart/usart.c
+          folders: []
+        - name: STM32F1xx_HAL_Driver
+          files:
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_usart.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_iwdg.c
+            - path: ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c
+          folders: []
+    - name: Middle
+      files: []
+      folders:
+        - name: USB_CORE
+          files:
+            - path: ../../Middlewares/usb/STM32_USB_Device_Library/Core/Src/usbd_core.c
+            - path: ../../Middlewares/usb/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c
+            - path: ../../Middlewares/usb/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c
+          folders: []
+        - name: USB_CLASS
+          files:
+            - path: ../../Middlewares/usb/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c
+          folders: []
+        - name: USB_APP
+          files:
+            - path: ../../Middlewares/usb/USB_APP/usbd_cdc_interface.c
+            - path: ../../Middlewares/usb/USB_APP/usbd_conf.c
+            - path: ../../Middlewares/usb/USB_APP/usbd_desc.c
+          folders: []
+        - name: USB_HAL
+          files:
+            - path: ../../Middlewares/usb/USB_HAL/stm32f1xx_hal_pcd.c
+            - path: ../../Middlewares/usb/USB_HAL/stm32f1xx_hal_pcd_ex.c
+            - path: ../../Middlewares/usb/USB_HAL/stm32f1xx_ll_usb.c
+          folders: []
+    - name: pikascript-core
+      files:
+        - path: ../../python/pikascript-core/BaseObj.c
+        - path: ../../python/pikascript-core/dataArg.c
+        - path: ../../python/pikascript-core/dataArgs.c
+        - path: ../../python/pikascript-core/dataLink.c
+        - path: ../../python/pikascript-core/dataLinkNode.c
+        - path: ../../python/pikascript-core/dataMemory.c
+        - path: ../../python/pikascript-core/dataQueue.c
+        - path: ../../python/pikascript-core/dataQueueObj.c
+        - path: ../../python/pikascript-core/dataStack.c
+        - path: ../../python/pikascript-core/dataString.c
+        - path: ../../python/pikascript-core/dataStrs.c
+        - path: ../../python/pikascript-core/PikaCompiler.c
+        - path: ../../python/pikascript-core/PikaObj.c
+        - path: ../../python/pikascript-core/PikaParser.c
+        - path: ../../python/pikascript-core/PikaPlatform.c
+        - path: ../../python/pikascript-core/PikaVM.c
+        - path: ../../python/pikascript-core/TinyObj.c
+      folders: []
+    - name: pikascript-api
+      files:
+        - path: ../../python/pikascript-api/__asset_pikaModules_py_a.c
+        - path: ../../python/pikascript-api/__pikaBinding.c
+        - path: ../../python/pikascript-api/pikaScript.c
+      folders: []
+    - name: pikascript-lib
+      files:
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdData_ByteArray.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdData_Dict.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdData_FILEIO.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdData_List.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdData_String.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdData_Tuple.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdData_Utils.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c
+        - path: ../../python/pikascript-lib/PikaStdLib/PikaStdTask_Task.c
+        - path: ../../python/pikascript-lib/ExternLib/_motor.c
+        - path: ../../python/pikascript-lib/ExternLib/_os.c
+        - path: ../../python/pikascript-lib/ExternLib/_color.c
+        - path: ../../python/pikascript-lib/ExternLib/_touch.c
+        - path: ../../python/pikascript-lib/ExternLib/_ultrasion.c
+        - path: ../../python/pikascript-lib/ExternLib/_key.c
+        - path: ../../python/pikascript-lib/random/_random.c
+        - path: ../../python/pikascript-lib/math/_math.c
+        - path: ../../python/pikascript-lib/ExternLib/_beep.c
+      folders: []
+    - name: Readme
+      files:
+        - path: ../../readme.txt
+      folders: []
+dependenceList: []
+outDir: build
+miscInfo:
+  uid: 7e06abed35a76e0393557a8b2ca399b1
+targets:
+  SparkAi:
+    cppPreprocessAttrs:
+      defineList:
+        - USE_HAL_DRIVER
+        - STM32F103xE
+        - PIKA_CONFIG_ENABLE
+      incList:
+        - ../../Users
+        - ../../Drivers
+        - ../../Drivers/BSP
+        - ../../Drivers/CMSIS/Device/ST/STM32F1xx/Include
+        - ../../Drivers/STM32F1xx_HAL_Driver/Inc
+        - ../../Drivers/CMSIS/Include
+        - ../../Middlewares/event_manager
+        - ../../Drivers/BSP/LED
+        - ../../Drivers/BSP/TIMER
+        - ../../Drivers/BSP/KEY
+        - ../../Middlewares/malloc
+        - ../../Middlewares/usb/STM32_USB_Device_Library/Class/CDC/Inc
+        - ../../Middlewares/usb/STM32_USB_Device_Library/Core/Inc
+        - ../../Middlewares/usb/USB_APP
+        - ../../Middlewares/usb/USB_HAL
+        - ../../Middlewares/protocol
+        - ../../Drivers/BSP/STMFLASH
+        - ../../python/pikascript-core
+        - ../../python/pikascript-api
+        - ../../python/pikascript-lib/PikaStdLib
+        - ../../Drivers/BSP/ADC
+        - ../../Drivers/BSP/IR
+        - ../../Drivers/BSP/IIC
+        - ../../Drivers/BSP/SPI
+        - ../../Middlewares/deviceIdentify
+        - ../../application/beep
+        - ../../application/motor
+        - ../../Drivers/BSP/WDG
+        - ../../application/blue
+        - ../../application/color
+        - ../../application/touch
+        - ../../application/ultrasion
+        - ../../Middlewares/lbs_file_manager
+        - ../../Middlewares/monitor
+        - ../../Middlewares/bat_manager
+        - ../../Middlewares/RTC
+        - ../../Middlewares/ymodem
+        - ../../Middlewares/stubs
+        - .cmsis/include
+        - RTE/_SparkAi
+      libList: []
+    excludeList: []
+    settings:
+      debugger: cortex-debug
+    toolchain: AC6
+    toolchainConfigMap:
+      AC6:
+        archExtensions: ""
+        cpuType: Cortex-M3
+        floatingPointHardware: none
+        options:
+          version: 3
+          afterBuildTasks:
+            - name: "[Copy linker output for Keil User Commands]"
+              abortAfterFailed: true
+              command: mkdir ${KEIL_OUTPUT_DIR} & copy "${OutDir}\${ProjectName}.axf" "${KEIL_OUTPUT_DIR}\${ProjectName}.axf"
+              disable: false
+            - name: fromelf.exe --bin -o "$L@L.bin" "#L"
+              abortAfterFailed: true
+              command: fromelf.exe --bin -o "${KEIL_OUTPUT_DIR}\${ProjectName}.bin" "${KEIL_OUTPUT_DIR}\${ProjectName}.axf"
+              disable: false
+            - name: python -u "..\..\tools\mdk_deploy_prompt.py" "#L"
+              abortAfterFailed: true
+              command: python -u "..\..\tools\mdk_deploy_prompt.py" "${KEIL_OUTPUT_DIR}\${ProjectName}.axf"
+              disable: false
+          asm-compiler:
+            $use: asm-auto
+            defines: []
+            misc-controls: ""
+          beforeBuildTasks: []
+          c/cpp-compiler:
+            language-c: c99
+            language-cpp: c++11
+            link-time-optimization: false
+            one-elf-section-per-function: true
+            optimization: level-0
+            short-enums#wchar: true
+            warnings: ac5-like-warnings
+          global:
+            output-debug-info: enable
+            use-microLIB: false
+          linker:
+            $disableOutputTask: false
+            $outputTaskExcludes:
+              - .bin
+              - .s19
+            misc-controls: --diag_suppress=L6329
+            output-format: elf
+            ro-base: "0x08000000"
+            rw-base: "0x20000000"
+            xo-base: ""
+        scatterFilePath: ""
+        storageLayout:
+          RAM:
+            - id: 1
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 2
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 3
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 1
+              isChecked: true
+              mem:
+                size: "0x20000"
+                startAddr: "0x20000000"
+              noInit: false
+              tag: IRAM
+            - id: 2
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: IRAM
+          ROM:
+            - id: 1
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 2
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 3
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 1
+              isChecked: true
+              isStartup: true
+              mem:
+                size: "0x78000"
+                startAddr: "0x8008000"
+              tag: IROM
+            - id: 2
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: IROM
+        useCustomScatterFile: false
+    uploadConfigMap:
+      JLink:
+        baseAddr: ""
+        bin: ""
+        cpuInfo:
+          cpuName: "null"
+          vendor: "null"
+        otherCmds: ""
+        proType: 1
+        speed: 8000
+    uploader: JLink
