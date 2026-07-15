@@ -81,7 +81,7 @@
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
-            <RunUserProg2>1</RunUserProg2>
+            <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>fromelf.exe --bin -o "$L@L.bin" "#L"</UserProg1Name>
             <UserProg2Name>python -u "..\..\tools\mdk_deploy_prompt.py" "#L"</UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
@@ -528,6 +528,11 @@
               <FileName>pika_config.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\Users\pika_config.h</FilePath>
+            </File>
+            <File>
+              <FileName>app_pika_script_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Users\app_pika_script_flash.c</FilePath>
             </File>
           </Files>
         </Group>
