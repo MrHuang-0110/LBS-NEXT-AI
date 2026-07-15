@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-/* 脚本持久化区: Flash 0x08040000 ~ 0x08047FFF, 32KB */
-#define APP_SCRIPT_FLASH_ADDR       0x08040000U
+/* 脚本持久化区: Flash 0x08060000 ~ 0x08067FFF, 32KB (避开 APP 代码) */
+#define APP_SCRIPT_FLASH_ADDR       0x08060000U
 #define APP_SCRIPT_FLASH_SIZE       (32U * 1024U)
 #define APP_SCRIPT_FLASH_MAGIC      0x6F795053U  /* 'SPyo' */
 #define APP_SCRIPT_FLASH_VERSION    1U

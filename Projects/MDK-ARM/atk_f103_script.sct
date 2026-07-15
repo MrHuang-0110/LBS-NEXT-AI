@@ -1,0 +1,20 @@
+; *************************************************************
+; *** Custom Scatter File for Script Flash Persistence       ***
+; *** 预留 0x08060000-0x08067FFF 给脚本持久化区               ***
+; *************************************************************
+
+LR_IROM1 0x08008000 0x00078000  {    ; load region (APP start to user config)
+  ER_IROM1 0x08008000 0x00058000  {  ; 0x08008000-0x08060000 (352KB)
+   *.o (RESET, +First)
+   *(InRoot$$Sections)
+   .ANY (+RO)
+   .ANY (+XO)
+  }
+  ER_IROM2 0x08068000 0x00010000  {  ; 0x08068000-0x08078000 (64KB)
+   .ANY (+RO)
+   .ANY (+XO)
+  }
+  RW_IRAM1 0x20000000 0x00020000  {  ; RW data
+   .ANY (+RW +ZI)
+  }
+}

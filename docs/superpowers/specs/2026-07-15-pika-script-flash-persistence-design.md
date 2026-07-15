@@ -25,7 +25,7 @@
 | 保存触发 | 仅长按中键关机 (`app_shutdown_sequence`) |
 | 启动加载 | 只装载 `AppPika_LoadBytecode`, 不自动运行 |
 | Ymodem 下载 | 只写 RAM, 不触发 Flash 写 |
-| Flash 脚本区 | 单槽 32KB, 0x08040000–0x08047FFF |
+| Flash 脚本区 | 单槽 32KB, 0x08060000–0x08067FFF |
 | 校验 | CRC32 (复用 `drv_flash_storage.c` 的 `crc32_update` 算法) |
 | MCU / Flash | APM32E103RE, 512KB Flash, 页大小 2KB |
 
@@ -37,20 +37,20 @@
 0x08000000 +--------------------+
            | Bootloader (32KB)  | 不在本仓库
 0x08008000 +--------------------+
-           | APP 代码 (~224KB)  | 本仓库
-0x08040000 +--------------------+  ← APP_SCRIPT_FLASH_ADDR
+           | APP 代码 (ER_IROM1) | 本仓库, 352KB
+0x08060000 +--------------------+  ← APP_SCRIPT_FLASH_ADDR (修正: 避开 APP 代码)
            | 脚本持久化区(32KB) | 新增
            |  - header (16B)    |
            |  - script_data     |
            |  - pad + crc32     |
-0x08048000 +--------------------+
-           | 未使用 (192KB)     |
+0x08068000 +--------------------+
+           | APP 代码续 (ER_IROM2)| 溢出区, 64KB
 0x08078000 +--------------------+
            | 用户配置 (2KB)     | 颜色校准 + BT 配对 (drv_flash_storage.c)
 0x08080000 +--------------------+
 ```
 
-与现有区域不冲突: 脚本区 0x08040000–0x08047FFF 在 APP 代码之后、用户配置页之前。
+与现有区域不冲突: 脚本区 0x08060000–0x08067FFF 通过散列文件拆分 ER_IROM1/ER_IROM2 预留, 链接器不会将代码放入此区。
 
 ---
 
@@ -89,7 +89,7 @@
 #include <stdint.h>
 
 /* 脚本持久化 Flash 区 */
-#define APP_SCRIPT_FLASH_ADDR       0x08040000U
+#define APP_SCRIPT_FLASH_ADDR       0x08060000U
 #define APP_SCRIPT_FLASH_SIZE       (32U * 1024U)
 #define APP_SCRIPT_FLASH_MAGIC      0x6F795053U  /* 'SPyo' */
 #define APP_SCRIPT_FLASH_VERSION    1U

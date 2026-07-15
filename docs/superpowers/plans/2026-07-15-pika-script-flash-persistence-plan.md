@@ -4,13 +4,13 @@
 
 **Goal:** 实现 PikaPython 脚本在内部 Flash 中持久化: 长按关机时保存, 启动时自动装载(不运行), Ymodem 下载仍只写 RAM。
 
-**Architecture:** 新建独立模块 `app_pika_script_flash` (方案 B), 在 Flash 中划出 32KB 单槽区 (0x08040000–0x08047FFF), 用 CRC32 校验完整性, 复用 HAL Flash API 与现有 `drv_flash_storage.c` 风格一致。
+**Architecture:** 新建独立模块 `app_pika_script_flash` (方案 B), 在 Flash 中划出 32KB 单槽区 (0x08060000–0x08067FFF), 用 CRC32 校验完整性, 复用 HAL Flash API 与现有 `drv_flash_storage.c` 风格一致。散列文件拆分为 ER_IROM1/ER_IROM2 预留脚本区。
 
 **Tech Stack:** C (STM32 HAL), Keil µVision MDK-ARM
 
 ## Global Constraints
 
-- 脚本区地址: 0x08040000, 大小 32KB, 单槽, 不与 0x08078000 用户配置页冲突
+- 脚本区地址: 0x08060000, 大小 32KB, 单槽, 散列文件拆分 ER_IROM1/ER_IROM2 预留
 - 保存触发: 仅长按关机 `app_shutdown_sequence()` 内调用
 - 启动加载: 仅装载 `AppPika_LoadBytecode()`, 不自动运行
 - Ymodem 下载: 只写 RAM, 不触发 Flash 写
@@ -37,8 +37,8 @@
 
 #include <stdint.h>
 
-/* 脚本持久化区: Flash 0x08040000 ~ 0x08047FFF, 32KB */
-#define APP_SCRIPT_FLASH_ADDR       0x08040000U
+/* 脚本持久化区: Flash 0x08060000 ~ 0x08067FFF, 32KB */
+#define APP_SCRIPT_FLASH_ADDR       0x08060000U
 #define APP_SCRIPT_FLASH_SIZE       (32U * 1024U)
 #define APP_SCRIPT_FLASH_MAGIC      0x6F795053U  /* 'SPyo' */
 #define APP_SCRIPT_FLASH_VERSION    1U

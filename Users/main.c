@@ -73,7 +73,7 @@ static void disable_jtag_enable_swd(void)
 static void app_shutdown_sequence(void)
 {
     beep_stop();
-    AppPikaScriptFlash_SaveFromRam();   /* 关机前保存当前脚本到 Flash */
+    (void)AppPikaScriptFlash_SaveFromRam();   /* 关机前保存当前脚本到 Flash */
     DrvLed_SetFlowEnable(0U);
     DrvLed_PlayShutdownAnimationBlocking();
     beep_play_shutdown_melody_blocking();
@@ -204,7 +204,7 @@ static void systemInit(void)
     __enable_irq();
     delay_ms(DRV_BT_AT_GAP_MS);
     blue_init();
-    AppPikaScriptFlash_LoadToRam();   /* 若 Flash 有有效脚本, 装载到 RAM (不运行) */
+    (void)AppPikaScriptFlash_LoadToRam();   /* 若 Flash 有有效脚本, 装载到 RAM (不运行) */
     AppCmd_SyncBtFromModule();
     s_key_ready_tick = HAL_GetTick();
     s_key_ready_inited = 1U;
