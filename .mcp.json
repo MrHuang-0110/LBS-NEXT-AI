@@ -3,9 +3,14 @@
     "memory": {
       "type": "stdio",
       "command": "cmd",
-      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-memory"],
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
       "env": {
-        "MEMORY_FILE_PATH": "${CLAUDE_PROJECT_DIR}/.memory/memory.jsonl"
+        "MEMORY_FILE_PATH": "e:/LBS-NEXT-AI/.memory/memory.jsonl"
       }
     }
   }
