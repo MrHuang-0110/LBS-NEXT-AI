@@ -66,3 +66,8 @@ The APP is **cooperative/event-driven** — there is no RTOS. [Users/main.c](Use
 - All HAL/Driver code uses `uint8_t/uint32_t` fixed-width types, `0U`/`1U` suffixes on integer literals, and `(void)` casts on intentionally-ignored return values — match this style.
 - Comments are mixed Chinese/English; new code in this repo uses Chinese comments. Preserve encoding (GBK for legacy `.txt`, UTF-8 for `.c/.h` and `.py`).
 - `disable_jtag_enable_swd()` in `main.c` keeps SWD alive for Keil debugging — do not re-enable full JTAG or you lose the debug probe.
+
+<!-- project-memory:start -->
+会话开始时，先调用 mcp__memory__read_graph 读取本项目记忆再开始工作。若因 MCP 服务/包缺失失败，按 project-memory skill 的 setup Step 0 自愈安装后重试。
+<!-- project-memory:end -->
+
