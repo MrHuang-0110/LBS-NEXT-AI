@@ -164,7 +164,7 @@ void busDataparsing(_AGREEMENT *frame, void (*port_transerf_data)(void *data, ui
             else if (AppPika_HasBytecode() != 0U)
             {
                 start_py = true;
-                (void)AppPika_Start();
+                /* AppPika_Start() 由主循环统一调用，避免在 ISR 上下文中启动 VM */
             }
             break;
         case 0xBE:

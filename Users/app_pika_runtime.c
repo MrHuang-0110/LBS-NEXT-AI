@@ -153,6 +153,7 @@ int AppPika_Start(void)
 
     s_stop_req = 0U;
     s_state = APP_PIKA_STATE_RUNNING;
+
     /* 中键短按在 main 里会先 SetFlowEnable(0)，此处须重新打开流水，否则脚本运行期间四灯全灭 */
     DrvLed_SetFlowEnable(1U);
     DrvLed_SetFlowFast(1U);
@@ -213,5 +214,5 @@ void AppPika_OnKeyToggle(void)
         return;
     }
     start_py = true;
-    (void)AppPika_Start();
+    /* AppPika_Start() 由 main() 主循环统一调用，避免在嵌套上下文中阻塞 */
 }

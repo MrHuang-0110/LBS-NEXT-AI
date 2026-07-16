@@ -145,7 +145,7 @@ static void Main_Loop_Process(void)
         uint32_t press_duration_ms = HAL_GetTick() - press_start_tick;
         if ((press_duration_ms > 30U) && (press_duration_ms < KEY_CLICK_TOGGLE_MAX_MS))
         {
-            /* 先恢复流水再启动脚本：AppPika_Start 会阻塞到脚本结束 */
+            /* 先恢复流水再启动脚本：start_py 标志由主循环在 Main_Loop_Process 返回后统一处理 */
             if (flow_paused != 0U)
             {
                 DrvLed_SetFlowEnable(1U);
@@ -217,6 +217,10 @@ int main(void)
     while (1)
     {
         Main_Loop_Process();
+        if (start_py)
+        {
+            (void)AppPika_Start();
+        }
         Monitor_Poll();
         AppCmd_PollUsb();
         AppCmd_PollBt();
