@@ -4,3 +4,15 @@ Output/
 # Python 字节码缓存
 __pycache__/
 *.pyc
+
+# Cognee 项目记忆数据库
+.cognee/
+
+# MCP Memory 数据文件（个人 AI 状态，不共享）
+.memory/memory.jsonl
+
+# 本地 Claude 配置（含 API key 等敏感信息）
+.claude/settings.local.json
+
+# 编译产物（测试/工具）
+*.exe
