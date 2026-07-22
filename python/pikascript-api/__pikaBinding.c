@@ -2365,6 +2365,26 @@ method_typedef(
     "resetTimer", ""
 );
 
+void _os_set_point_matrixMethod(PikaObj *self, Args *_args_){
+    int point = args_getInt(_args_, "point");
+    int state = args_getInt(_args_, "state");
+    _os_set_point_matrix(self, point, state);
+}
+method_typedef(
+    _os_set_point_matrix,
+    "set_point_matrix", "point,state"
+);
+
+void _os_set_port_modeMethod(PikaObj *self, Args *_args_){
+    int port = args_getInt(_args_, "port");
+    pika_float mode = args_getFloat(_args_, "mode");
+    _os_set_port_mode(self, port, mode);
+}
+method_typedef(
+    _os_set_port_mode,
+    "set_port_mode", "port,mode"
+);
+
 void _os_sleep_sMethod(PikaObj *self, Args *_args_){
     pika_float tick = args_getFloat(_args_, "tick");
     _os_sleep_s(self, tick);
@@ -2393,8 +2413,10 @@ method_typedef(
 
 class_def(_os){
     __BEFORE_MOETHOD_DEF
+    method_def(_os_set_point_matrix, 163717262),
     method_def(_os_resetTimer, 210342601),
     method_def(_os_timer, 275614598),
+    method_def(_os_set_port_mode, 378889625),
     method_def(_os_sleep_s, 460522064),
     method_def(_os_get_port_linke, 573189659),
     method_def(_os_stop_exit, 1082812612),

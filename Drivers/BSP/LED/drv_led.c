@@ -11,8 +11,7 @@
 #define LED_FLOW_PERIOD_FAST_MS     40U
 
 #if WIALL_HARDWARE_ENABLE
-#define LED_FLOW_COUNT              4U
-#define LED_FLOW_MASK               (GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3)
+#define LED_FLOW_COUNT              9U
 #define LED_BT_GPIO_PORT            GPIOC
 #define LED_BT_GPIO_PIN             GPIO_PIN_15
 #else
@@ -21,6 +20,25 @@
 #define LED_BT_GPIO_PIN             GPIO_PIN_2
 #endif
 
+/* 流水灯引脚映射：支持跨 GPIO 端口 */
+typedef struct {
+    GPIO_TypeDef *port;
+    uint16_t pin;
+} LedFlowPin_t;
+
+#if WIALL_HARDWARE_ENABLE
+static const LedFlowPin_t s_flow_pin[LED_FLOW_COUNT] = {
+    {GPIOC, GPIO_PIN_0},   /* [1] */
+    {GPIOC, GPIO_PIN_1},   /* [2] */
+    {GPIOC, GPIO_PIN_2},   /* [3] */
+    {GPIOC, GPIO_PIN_3},   /* [4] */
+    {GPIOC, GPIO_PIN_13},  /* [5] */
+    {GPIOB, GPIO_PIN_7},   /* [6] */
+    {GPIOB, GPIO_PIN_6},   /* [7] */
+    {GPIOB, GPIO_PIN_5},   /* [8] */
+    {GPIOB, GPIO_PIN_2},   /* [9] */
+};
+#else
 static const uint16_t s_flow_pin[LED_FLOW_COUNT] =
 {
 #if WIALL_HARDWARE_ENABLE
@@ -34,6 +52,7 @@ static const uint16_t s_flow_pin[LED_FLOW_COUNT] =
     GPIO_PIN_2,
 #endif
 };
+#endif
 
 static uint8_t s_flow_enable;
 static uint8_t s_flow_idx;
@@ -49,8 +68,13 @@ static void led_pin_set(uint8_t idx, uint8_t on)
     {
         return;
     }
-    HAL_GPIO_WritePin(GPIOC, s_flow_pin[idx],
+#if WIALL_HARDWARE_ENABLE
+    HAL_GPIO_WritePin(s_flow_pin[idx].port, s_flow_pin[idx].pin,
                       (on == LED_ON) ? GPIO_PIN_RESET : GPIO_PIN_SET);
+#else
+    HAL_GPIO_WritePin(GPIOA, s_flow_pin[idx],
+                      (on == LED_ON) ? GPIO_PIN_RESET : GPIO_PIN_SET);
+#endif
 }
 
 static void flow_all_off(void)
@@ -85,12 +109,18 @@ void DrvLed_Init(void)
 
 #if WIALL_HARDWARE_ENABLE
     __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
     gpio.Mode = GPIO_MODE_OUTPUT_PP;
     gpio.Pull = GPIO_PULLUP;
     gpio.Speed = GPIO_SPEED_FREQ_HIGH;
-    gpio.Pin = LED_FLOW_MASK;
-    HAL_GPIO_Init(GPIOC, &gpio);
-    HAL_GPIO_WritePin(GPIOC, LED_FLOW_MASK, GPIO_PIN_SET);
+
+    /* 逐个初始化流水灯引脚（跨 GPIOC 和 GPIOB） */
+    for (i = 0U; i < LED_FLOW_COUNT; i++)
+    {
+        gpio.Pin = s_flow_pin[i].pin;
+        HAL_GPIO_Init(s_flow_pin[i].port, &gpio);
+        HAL_GPIO_WritePin(s_flow_pin[i].port, s_flow_pin[i].pin, GPIO_PIN_SET);
+    }
 
     gpio.Pin = LED_BT_GPIO_PIN;
     HAL_GPIO_Init(LED_BT_GPIO_PORT, &gpio);
@@ -219,6 +249,44 @@ void DrvLed_PlayShutdownAnimationBlocking(void)
     }
 
     flow_all_off();
+}
+
+void DrvLed_SetPoint(uint8_t point)
+{
+    uint8_t i;
+
+    /* 手动控制模式：关闭流水动画 */
+    s_flow_enable = 0U;
+
+    if (point == 0U)
+    {
+        flow_all_off();
+        return;
+    }
+
+    if (point > LED_FLOW_COUNT)
+    {
+        return;
+    }
+
+    /* point 是 1-indexed，点亮对应 LED */
+    for (i = 0U; i < LED_FLOW_COUNT; i++)
+    {
+        led_pin_set(i, (i == (point - 1U)) ? LED_ON : LED_OFF);
+    }
+}
+
+void DrvLed_SetPointState(uint8_t point, uint8_t on)
+{
+    if (point >= LED_FLOW_COUNT)
+    {
+        return;
+    }
+
+    /* 手动控制模式：关闭流水动画 */
+    s_flow_enable = 0U;
+
+    led_pin_set(point, (on != 0U) ? LED_ON : LED_OFF);
 }
 
 void DrvLed_PollBtLink(uint8_t connected)

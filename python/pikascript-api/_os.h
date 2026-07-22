@@ -19,6 +19,8 @@ PikaObj *New__os(Args *args);
 
 int _os_get_port_linke(PikaObj *self, int port);
 void _os_resetTimer(PikaObj *self);
+void _os_set_point_matrix(PikaObj *self, int point, int state);
+void _os_set_port_mode(PikaObj *self, int port, pika_float mode);
 void _os_sleep_s(PikaObj *self, pika_float tick);
 void _os_stop_exit(PikaObj *self);
 pika_float _os_timer(PikaObj *self);

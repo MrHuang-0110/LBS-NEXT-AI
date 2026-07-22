@@ -9,6 +9,8 @@ void DrvLed_SetFlowEnable(uint8_t enable);
 void DrvLed_SetFlowFast(uint8_t fast);
 void DrvLed_ShowHoldProgress(uint8_t lit_count);
 void DrvLed_PlayShutdownAnimationBlocking(void);
+void DrvLed_SetPoint(uint8_t point);
+void DrvLed_SetPointState(uint8_t point, uint8_t on);
 void DrvLed_PollBtLink(uint8_t connected);
 void led_flow_event_callback(void *arg);
 

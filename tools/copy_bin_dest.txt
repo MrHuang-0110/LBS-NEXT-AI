@@ -3,4 +3,4 @@
 # 目录不存在时自动创建
 # 修改后保存, 下次 Keil 编译完自动生效
 
-D:\MyFirmware\
+E:\LBS-FramWare\products\NEXT-AI\fwlib

@@ -2,6 +2,7 @@
 #include "PikaVM.h"
  
 extern void usb_printf(char *fmt, ...);
+extern uint8_t os_is_port_serial_mode(uint8_t motor_id);
 void motor_stopToMode(uint8_t id,uint8_t mode)
 { 
  	switch(mode)
@@ -94,25 +95,34 @@ void set_motor_dir(float *left_duty,float *right_duty,int state)
 }
 
 void cloase_all_motor(void)
-{ 
-   motor_stopToMode(PORT_MOTOR_A,BREAK_STOP);
-	 motor_stopToMode(PORT_MOTOR_B,BREAK_STOP);
-	 motor_stopToMode(PORT_MOTOR_C,BREAK_STOP);
-	 motor_stopToMode(PORT_MOTOR_D,BREAK_STOP);
-	 
-	 delay_ms(30);
-	
-   motor_stopToMode(PORT_MOTOR_A,SILD_STOP);
-	 motor_stopToMode(PORT_MOTOR_B,SILD_STOP);
-	 motor_stopToMode(PORT_MOTOR_C,SILD_STOP);
-	 motor_stopToMode(PORT_MOTOR_D,SILD_STOP);	
-	 delay_ms(30);
-	
-	 for(uint8_t i = 4;i<8;i++)
-   { 
-	    DEV_MOTOR *motor = (DEV_MOTOR*)getHubBase(i);
-		  motor->stop_mode = SILD_STOP;
-		  motor->duty = 50;
-	 }
-} 
- 
+{
+    if (!os_is_port_serial_mode(PORT_MOTOR_A))
+        motor_stopToMode(PORT_MOTOR_A, BREAK_STOP);
+    if (!os_is_port_serial_mode(PORT_MOTOR_B))
+        motor_stopToMode(PORT_MOTOR_B, BREAK_STOP);
+    if (!os_is_port_serial_mode(PORT_MOTOR_C))
+        motor_stopToMode(PORT_MOTOR_C, BREAK_STOP);
+    if (!os_is_port_serial_mode(PORT_MOTOR_D))
+        motor_stopToMode(PORT_MOTOR_D, BREAK_STOP);
+
+    delay_ms(30);
+
+    if (!os_is_port_serial_mode(PORT_MOTOR_A))
+        motor_stopToMode(PORT_MOTOR_A, SILD_STOP);
+    if (!os_is_port_serial_mode(PORT_MOTOR_B))
+        motor_stopToMode(PORT_MOTOR_B, SILD_STOP);
+    if (!os_is_port_serial_mode(PORT_MOTOR_C))
+        motor_stopToMode(PORT_MOTOR_C, SILD_STOP);
+    if (!os_is_port_serial_mode(PORT_MOTOR_D))
+        motor_stopToMode(PORT_MOTOR_D, SILD_STOP);
+
+    delay_ms(30);
+
+    for (uint8_t i = 4; i < 8; i++)
+    {
+        if (os_is_port_serial_mode(i)) continue;
+        DEV_MOTOR *motor = (DEV_MOTOR *)getHubBase(i);
+        motor->stop_mode = SILD_STOP;
+        motor->duty = 50;
+    }
+}

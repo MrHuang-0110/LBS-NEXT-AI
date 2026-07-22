@@ -13,12 +13,13 @@
 #include "drv_bt_config.h"
 #include "adc.h"
 #include "drv_ir_reflect.h"
+#include "PikaVM.h"
 
 volatile bool is_iwdg = false;
 volatile uint32_t spark_version = 100U;
 volatile float bat = 0.0f;
 
-#define KEY_HOLD_SHUTDOWN_MS    2000U
+#define KEY_HOLD_SHUTDOWN_MS    1500U
 #define KEY_BOOT_IGNORE_MS      800U
 #define KEY_CLICK_TOGGLE_MAX_MS 800U
 #define KEY_CLICK_FREQ_HZ       880U
@@ -76,6 +77,7 @@ static void app_shutdown_sequence(void)
     (void)AppPikaScriptFlash_SaveFromRam();   /* 关机前保存当前脚本到 Flash */
     DrvLed_SetFlowEnable(0U);
     DrvLed_PlayShutdownAnimationBlocking();
+    pika_vmSignal_setCtrlClear();
     beep_play_shutdown_melody_blocking();
     HAL_GPIO_WritePin(APP_PWR_CTRL_GPIO_PORT, APP_PWR_CTRL_GPIO_PIN, GPIO_PIN_RESET);
     while (1)
@@ -122,11 +124,12 @@ static void Main_Loop_Process(void)
         else
         {
             uint32_t held_ms = HAL_GetTick() - press_start_tick;
-            uint8_t lit = (uint8_t)((held_ms * 4U) / KEY_HOLD_SHUTDOWN_MS);
-            if (lit > 4U)
+            uint8_t group = (uint8_t)((held_ms * 3U) / KEY_HOLD_SHUTDOWN_MS);
+            if (group > 3U)
             {
-                lit = 4U;
+                group = 3U;
             }
+            uint8_t lit = group * 3U;
             DrvLed_ShowHoldProgress(lit);
             if (lit > hold_lit_prev)
             {
@@ -145,12 +148,8 @@ static void Main_Loop_Process(void)
         uint32_t press_duration_ms = HAL_GetTick() - press_start_tick;
         if ((press_duration_ms > 30U) && (press_duration_ms < KEY_CLICK_TOGGLE_MAX_MS))
         {
-            /* 先恢复流水再启动脚本：start_py 标志由主循环在 Main_Loop_Process 返回后统一处理 */
-            if (flow_paused != 0U)
-            {
-                DrvLed_SetFlowEnable(1U);
-                flow_paused = 0U;
-            }
+            /* 短按：启动/停止脚本，LED 流水由 Python 的 set_point_matrix 控制 */
+            flow_paused = 0U;
             AppPika_OnKeyToggle();
         }
         else if (flow_paused != 0U)
@@ -188,7 +187,7 @@ static void systemInit(void)
     beep_init();
     AppCmd_Init();
     Time_Init();
-    Key_Config_Params(10, 1500, 500);
+    Key_Config_Params(10, 3000, 500);
    // iwdg_init(IWDG_PRESCALER_64, 625);
     for (uint32_t i = 0; i < sizeof(event_t) / sizeof(event_t[0]); i++)
     {
