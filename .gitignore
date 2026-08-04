@@ -5,14 +5,21 @@ Output/
 __pycache__/
 *.pyc
 
+# MCP Memory 数据目录（AI 个人状态，不共享，整个目录不进 git）
+.memory/
+
+# 本地 agent 配置（含 API key 等敏感信息，整个目录不进 git）
+.claude/
+
+# agent 工作流文档（.claude 配套，非项目源码）
+docs/agents/
+docs/superpowers/
+
+# Claude 临时文件
+**/tmpclaude-*
+
 # Cognee 项目记忆数据库
 .cognee/
-
-# MCP Memory 数据文件（个人 AI 状态，不共享）
-.memory/memory.jsonl
-
-# 本地 Claude 配置（含 API key 等敏感信息）
-.claude/settings.local.json
 
 # 编译产物（测试/工具）
 *.exe

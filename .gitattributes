@@ -1,1 +1,1 @@
-.memory/memory.jsonl merge=union
+# .memory/ 已整体忽略，无需 merge 驱动
