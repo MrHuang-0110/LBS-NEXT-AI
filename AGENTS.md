@@ -21,6 +21,8 @@
 | 依赖 | `pip install pyserial` |
 | 清理中间文件 | `keilkill.bat` |
 
+> `tools/`、`keilkill.bat`、`postbuild.bat` 为本地工具（不进 git，仅本机可用）；上表命令依赖它们，其他环境需自行提供等价工具。
+
 无 Makefile/测试框架/linter；`tests/` 下有独立单测（脚本 Flash 持久化等），用 Keil/桌面工具或手动验证。
 
 ## Architecture

@@ -18,6 +18,11 @@ docs/superpowers/
 # Claude 临时文件
 **/tmpclaude-*
 
+# 本地工具脚本（与源码无关，不进 git，仅本机使用）
+keilkill.bat
+postbuild.bat
+tools/
+
 # Cognee 项目记忆数据库
 .cognee/
 

@@ -1,6 +1,0 @@
-# 编译完成后 .bin 文件拷贝目标目录 (一行一个)
-# 支持多行, 会拷贝到每个目录
-# 目录不存在时自动创建
-# 修改后保存, 下次 Keil 编译完自动生效
-
-E:\LBS-FramWare\products\NEXT-AI\fwlib
