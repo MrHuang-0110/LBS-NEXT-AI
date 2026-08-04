@@ -35,6 +35,10 @@
 
 ## Conventions
 
+- **改代码后的强制流程（任何代码改动，含修 bug，缺一不可）**：
+  1. **TDD 测试** — 先写/补测试（test-driven-development），确保改动有测试覆盖且全部通过；
+  2. **代码审查** — 用 review 技能审查本次改动（正确性 / 安全性 / 遗漏）；
+  3. **code simple 优化** — 代码简化（去冗余、保持最小改动）。
 - 代码：`uint8_t/uint32_t` 固定宽度类型；整数常量加 `0U/1U` 后缀；忽略返回值显式 `(void)`；新代码中文注释；`main.c` 中保持 SWD 调试口（`disable_jtag_enable_swd()`），勿重新启用 JTAG。
 - 编码：`.c/.h/.py` 用 UTF-8；旧 `.txt` 为 GBK。
 - 记忆系统（**唯一**，docs/ 文档体系，已弃用 MCP memory 知识谱）：里程碑完成 → 更新 `docs/progress.md`；踩坑 → 记入 `docs/pitfalls.md`（现象→原因→方案，标注状态）；技术栈/架构变化 → 更新 `docs/tech-stack.md`。只记项目级重要信息，保持精简可读。
