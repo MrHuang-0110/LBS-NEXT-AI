@@ -126,11 +126,7 @@ void blue_set_off(void)
 
 void blue_send_data(char *str, uint16_t len)
 {
-    DEV_BLUE *blue = (DEV_BLUE *)getHubBase(PORT_BLUE);
-    if (blue != NULL)
-    {
-        uart_transmit_it(blue->huart, (uint8_t *)str, len);
-    }
+    (void)DrvComm_BtSendData((const uint8_t *)str, len);
 }
 
 void blue_init(void)

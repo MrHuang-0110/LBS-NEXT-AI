@@ -279,3 +279,11 @@ uint8_t DrvComm_BtSendMonitor(const char *str)
     tx_buf[len++] = '\n';
     return uart_transmit_it(huart, tx_buf, len);
 }
+
+uint8_t DrvComm_BtSendData(const uint8_t *data, uint16_t len)
+{
+    extern UART_HandleTypeDef *getusartHandle(uint8_t num);
+    extern uint8_t uart_transmit_it(UART_HandleTypeDef *huart, uint8_t *data, uint16_t len);
+    if (data == NULL || len == 0U) { return 0U; }
+    return uart_transmit_it(getusartHandle(5), (uint8_t *)data, len);
+}

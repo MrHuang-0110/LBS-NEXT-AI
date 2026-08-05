@@ -36,4 +36,6 @@ void DrvBtRing_SetPassthrough(uint8_t on);
 
 uint8_t DrvComm_BtSendMonitor(const char *str);
 
+uint8_t DrvComm_BtSendData(const uint8_t *data, uint16_t len);
+
 #endif
