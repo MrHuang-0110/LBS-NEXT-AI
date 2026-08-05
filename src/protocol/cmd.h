@@ -9,4 +9,6 @@ void Cmd_RegisterAction(uint8_t index, void (*action)(_AGREEMENT *frame));
 void Cmd_RegisterLineHandler(void (*handler)(const char *line, uint8_t port));
 void Cmd_SetYmodemActive(uint8_t on);
 uint8_t Cmd_IsYmodemActive(void);
+void Cmd_ProcessPendingLines(void);
+extern volatile uint8_t g_cmd_pending;
 #endif

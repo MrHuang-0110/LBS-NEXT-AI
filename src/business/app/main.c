@@ -225,6 +225,8 @@ int main(void)
             g_motor_stop_pending = 0U;
             cloase_all_motor();
         }
+        /* 消费挂起文本行命令（AT 交换/Ymodem 含 HAL_GetTick 超时，仅在主循环执行） */
+        Cmd_ProcessPendingLines();
         if (start_py)
         {
             (void)AppPika_Start();
