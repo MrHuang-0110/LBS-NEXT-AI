@@ -23,7 +23,7 @@
 #include "lbsfilemanager.h"
 #include "event_manager.h"
 #include "json-maker.h"
-#include "deviceidentify.h"
+#include "device_pool.h"
 #include "motor.h"
 #include "beep.h"
 #define APP_START_ADDR      0x08008000

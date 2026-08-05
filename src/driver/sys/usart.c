@@ -3,7 +3,7 @@
 #include "usart.h"
 #include "delay.h"
 #include "protocol.h"
-#include "deviceIdentify.h"
+#include "device_pool.h"
 #include "drv_comm.h"
 #include "stdarg.h"
 extern void usb_printf(char *fmt, ...);

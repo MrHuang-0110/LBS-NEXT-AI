@@ -1,7 +1,7 @@
 #ifndef __BLUE_H
 #define __BLUE_H
 #include "stdbool.h"
-#include "deviceidentify.h"
+#include "device_pool.h"
 
 #define PORT_BLUE    0x08
 #define DEVICE_BLUE_ID      0xAF

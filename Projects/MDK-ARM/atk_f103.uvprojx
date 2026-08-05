@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE,PIKA_CONFIG_ENABLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Users;..\..\Drivers;..\..\src\driver\bsp;..\..\src\driver\sys;..\..\src\driver\chip;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\CMSIS\Include;..\..\Middlewares\event_manager;..\..\Middlewares\malloc;..\..\Middlewares\usb\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Middlewares\usb\STM32_USB_Device_Library\Core\Inc;..\..\Middlewares\usb\USB_APP;..\..\Middlewares\usb\USB_HAL;..\..\Middlewares\protocol;..\..\python\pikascript-core;..\..\python\pikascript-api;..\..\python\pikascript-lib\PikaStdLib;..\..\Middlewares\deviceIdentify;..\..\application\beep;..\..\application\motor;..\..\application\blue;..\..\application\color;..\..\application\touch;..\..\application\ultrasion;..\..\Middlewares\lbs_file_manager;..\..\Middlewares\monitor;..\..\Middlewares\bat_manager;..\..\Middlewares\RTC;..\..\Middlewares\ymodem;..\..\Middlewares\stubs</IncludePath>
+              <IncludePath>..\..\Users;..\..\Drivers;..\..\src\driver\bsp;..\..\src\driver\sys;..\..\src\driver\chip;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\CMSIS\Include;..\..\Middlewares\usb\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Middlewares\usb\STM32_USB_Device_Library\Core\Inc;..\..\Middlewares\usb\USB_HAL;..\..\Middlewares\protocol;..\..\python\pikascript-core;..\..\python\pikascript-api;..\..\python\pikascript-lib\PikaStdLib;..\..\application\beep;..\..\application\motor;..\..\application\blue;..\..\application\color;..\..\application\touch;..\..\application\ultrasion;..\..\Middlewares\monitor;..\..\Middlewares\ymodem;..\..\Middlewares\stubs;..\..\src\middleware</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -672,12 +672,12 @@
             <File>
               <FileName>event_manager.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\event_manager\event_manager.c</FilePath>
+              <FilePath>..\..\src\middleware\event_manager.c</FilePath>
             </File>
             <File>
               <FileName>malloc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\malloc\malloc.c</FilePath>
+              <FilePath>..\..\src\middleware\malloc.c</FilePath>
             </File>
             <File>
               <FileName>protocol.c</FileName>
@@ -687,22 +687,22 @@
             <File>
               <FileName>lbsfilemanager.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\lbs_file_manager\lbsfilemanager.c</FilePath>
+              <FilePath>..\..\src\middleware\lbsfilemanager.c</FilePath>
             </File>
             <File>
-              <FileName>deviceIdentify.c</FileName>
+              <FileName>device_pool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\deviceIdentify\deviceIdentify.c</FilePath>
+              <FilePath>..\..\src\middleware\device_pool.c</FilePath>
             </File>
             <File>
               <FileName>drv_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\ymodem\drv_mem.c</FilePath>
+              <FilePath>..\..\src\middleware\drv_mem.c</FilePath>
             </File>
             <File>
               <FileName>drv_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\ymodem\drv_comm.c</FilePath>
+              <FilePath>..\..\src\middleware\drv_comm.c</FilePath>
             </File>
             <File>
               <FileName>drv_ymodem.c</FileName>
@@ -732,7 +732,7 @@
             <File>
               <FileName>bat_manager.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\bat_manager\bat_manager.c</FilePath>
+              <FilePath>..\..\src\middleware\bat_manager.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -772,17 +772,17 @@
             <File>
               <FileName>usbd_cdc_interface.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\usb\USB_APP\usbd_cdc_interface.c</FilePath>
+              <FilePath>..\..\src\middleware\usbd_cdc_interface.c</FilePath>
             </File>
             <File>
               <FileName>usbd_conf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\usb\USB_APP\usbd_conf.c</FilePath>
+              <FilePath>..\..\src\middleware\usbd_conf.c</FilePath>
             </File>
             <File>
               <FileName>usbd_desc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\usb\USB_APP\usbd_desc.c</FilePath>
+              <FilePath>..\..\src\middleware\usbd_desc.c</FilePath>
             </File>
           </Files>
         </Group>

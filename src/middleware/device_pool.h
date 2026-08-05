@@ -1,5 +1,5 @@
-#ifndef __DEVICEIDENTIFY_H
-#define __DEVICEIDENTIFY_H
+#ifndef __DEVICE_POOL_H
+#define __DEVICE_POOL_H
 
 #include "sys.h"
 

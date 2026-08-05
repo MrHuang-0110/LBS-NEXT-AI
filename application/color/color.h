@@ -2,7 +2,7 @@
 #define __COLOR_H
 #include "sys.h"
 #include "stdbool.h"
-#include "deviceidentify.h"
+#include "device_pool.h"
 typedef int FRESULT;
 #define FR_OK 0
 #define DEVICE_COLOR_ID          0xA2

@@ -2,7 +2,7 @@
 #define __TOUCH_H
 #include "sys.h"
 #include "stdbool.h"
-#include "deviceidentify.h"
+#include "device_pool.h"
 
 #define DEVICE_TOUCH_ID 0xA4
 
