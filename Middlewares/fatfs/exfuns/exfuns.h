@@ -51,7 +51,17 @@ typedef struct {
 FRESULT exfuns_fatfs_init(void);         
 FRESULT fatfs_format(const TCHAR* path); 
 uint8_t exfuns_init(void);                
-uint8_t exfuns_file_type(char *fname);  
+uint8_t exfuns_file_type(char *fname);
+
+/* ===== Task 16: UI callback registration point (middleware->business decoupling) ===== */
+typedef enum {
+    EXFUNS_UI_EVT_ADD_NAME = 0, /* file name added to UI list; name = received file name */
+    EXFUNS_UI_EVT_FILE_OK,      /* file receive OK */
+    EXFUNS_UI_EVT_FILE_ERROR    /* file receive error */
+} ExfunsUiEvent;
+
+typedef void (*ExfunsUiHandler)(ExfunsUiEvent event, const char *name);
+void Exfuns_RegisterUiHandler(ExfunsUiHandler handler);  
 
 uint8_t exfuns_get_free(uint8_t *pdrv, uint32_t *total, uint32_t *free);   
 uint32_t exfuns_get_folder_size(uint8_t *fdname);  

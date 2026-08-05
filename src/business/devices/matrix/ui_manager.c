@@ -132,6 +132,25 @@ void onRelease(uint8_t id,void*user_data)
 //  usb_printf("middle key release\r\n");
 }
 // 初始化UI管理器
+/* ===== Task 16: exfuns file-transfer UI callback (registered by business layer) ===== */
+static void exfuns_ui_event_handler(ExfunsUiEvent event, const char *name)
+{
+    switch (event) {
+    case EXFUNS_UI_EVT_ADD_NAME:
+        if (name != NULL) {
+            ui_manager_add_name((char *)name);
+        }
+        break;
+    case EXFUNS_UI_EVT_FILE_OK:
+    case EXFUNS_UI_EVT_FILE_ERROR:
+        /* touchFileOKCallBack()/touchFileErrorCallBack() were never implemented;
+           keep original runtime behavior (no-op) */
+        break;
+    default:
+        break;
+    }
+}
+
 void ui_manager_init(void)
 {
     memset(&ui_manager, 0, sizeof(UI_Manager));
@@ -139,6 +158,7 @@ void ui_manager_init(void)
     ui_manager.current_index = 0;
     ui_manager.key_pressed = false;
     ui_manager.last_key_check = HAL_GetTick();
+    Exfuns_RegisterUiHandler(exfuns_ui_event_handler);
 }
 bool ends_with_strstr(const char* str) {
     if (!str || strlen(str) < 2) return false;
