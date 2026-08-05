@@ -9,8 +9,6 @@ TIM_HandleTypeDef g_timx_handle;  /* ???????? */
  
 // ???????
 static volatile DateTime_t sys_time;  // ?????volatile???��????
-  DateTime_t start_time; 
-  DateTime_t onff_time;   
 static volatile uint32_t tick_counter = 0; // ??????????????????
 static const uint8_t month_days[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
@@ -56,30 +54,8 @@ static void time_add_one_second(void) {
 			 sys_time.minute = 0;
 			 sys_time.second = 0;
 }
- void Time_SaveToFlash(void)
-{ 
-}
 void Time_Init(void) {    
     Time_LoadFromFlash(); 
-	  SavePowerOnStartTimer();
-	  GetPoweDownTimer(&onff_time);
-}
-
-void SavePowerOnStartTimer(void)
-{ 
-}
-void SavePowerDownTimer(void)
-{ 
-}
-
-void GetPowerOnStartTimer(DateTime_t *dt)
-{ 
-    memcpy(dt, (void*)&sys_time, sizeof(DateTime_t));
-}
-
-void GetPoweDownTimer(DateTime_t *dt)
-{ 
-    memcpy(dt, (void*)&sys_time, sizeof(DateTime_t));
 }
 
 // ????????????????��??????
