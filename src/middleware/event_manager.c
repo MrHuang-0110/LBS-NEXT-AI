@@ -22,7 +22,7 @@ static bool find_event(char *name,uint32_t *event_id)
 	if(i == EVENT_MAX)return false;
   return true;	
 }
-uint32_t event_register(char *name,uint32_t threshold_ms, void (*callback)(void *), void *arg)
+uint32_t event_register(char *name,uint32_t threshold_ticks, void (*callback)(void *), void *arg)
 {
     if(event_count >= EVENT_MAX) return 0;
     
@@ -32,7 +32,7 @@ uint32_t event_register(char *name,uint32_t threshold_ms, void (*callback)(void 
 	  strcpy(event_list[event_count].name,name);
 	
     event_list[event_count].id = id;
-    event_list[event_count].threshold_ticks = threshold_ms; 
+    event_list[event_count].threshold_ticks = threshold_ticks; 
     event_list[event_count].accum_ticks = 0;
     event_list[event_count].callback = callback;
     event_list[event_count].arg = arg;
@@ -78,12 +78,12 @@ void set_event_enable(char *name)
 	    event_list[event_id].enabled = true;
 	 }
 }
-void set_event_threshold_ticks(char *name,uint32_t threshold_ms)
+void set_event_threshold_ticks(char *name,uint32_t threshold_ticks)
 { 
     uint32_t event_id;	
    if(find_event(name,&event_id))
 	 { 
-	    event_list[event_id].threshold_ticks = threshold_ms;
+	    event_list[event_id].threshold_ticks = threshold_ticks;
 		  event_list[event_id].enabled = true;
 	 }
 }

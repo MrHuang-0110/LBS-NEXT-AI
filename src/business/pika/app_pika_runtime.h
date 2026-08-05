@@ -13,7 +13,6 @@ typedef enum
 int AppPika_LoadBytecode(const uint8_t *data, uint32_t len);
 int AppPika_Start(void);
 int AppPika_Stop(void);
-void AppPika_OnKeyToggle(void);
 AppPikaState_t AppPika_GetState(void);
 uint8_t AppPika_HasBytecode(void);
 int AppPika_IsStopRequested(void);

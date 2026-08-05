@@ -61,7 +61,4 @@
 
 /* ????????*/
 void led_init(void);                                                                            /* ????? */
-
- 
-void led3_event_callback(void *arg);
 #endif

@@ -1,11 +1,8 @@
 
 #include "led.h"
 
-#include "key.h"
-#include "adc.h"
 #include "stdio.h"
 #include "string.h"
-#include "blue.h"
 /**
  * @brief       ��ʼ��LED���IO��, ��ʹ��ʱ��
  * @param       ��
@@ -52,24 +49,3 @@ void led_init(void)
 	  #endif
 }
 
- 
-#if WIALL_HARDWARE_ENABLE
-void led3_event_callback(void *arg)
-{ 
-	extern void usb_printf(char *fmt, ...);
- DEV_BLUE *blue = read_blue((SensorBase *)getHubBase(PORT_BLUE));
- 
-			if(blue->is_off_on)
-			{ 
-			  if(BLUE_STA)
-					LED2(0);
-				else{ 
-					LED2_TOGGLE();
-				}
-					 
-			}	 
-			else{ 
-			  LED2(1);
-			}
-}
-#endif
