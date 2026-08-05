@@ -56,7 +56,6 @@ void pika_hook_instruct(void)
     Monitor_Poll();
     AppCmd_PollUsb();
     AppCmd_PollBt();
-    check_battery_with_debounce();
 }
 
 int AppPika_IsStopRequested(void)

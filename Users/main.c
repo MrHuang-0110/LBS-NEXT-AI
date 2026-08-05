@@ -37,7 +37,8 @@ static EVENT_MANAGER event_t[] = {
  {"usb_receive", 0, usb_event_receive_callback, (USB_MESSAGE_BOX *)&usb_message},
  {"beep", 1, beep_update, NULL},
  {"key_middle_event", 1, key_middle_callback, NULL},
- {"monitor_event", 1, monitor_call_back, NULL}
+ {"monitor_event", 1, monitor_call_back, NULL},
+ {"battery_check", 600, battery_check_callback, NULL}
 };
 
 static uint8_t check_swd_config(void)
@@ -223,7 +224,6 @@ int main(void)
         Monitor_Poll();
         AppCmd_PollUsb();
         AppCmd_PollBt();
-        check_battery_with_debounce();
         //HAL_Delay(5);
     }
 }

@@ -133,3 +133,9 @@ void check_battery_with_debounce(void)
         }
     }
 }
+
+void battery_check_callback(void *arg)
+{
+    (void)arg;
+    check_battery_with_debounce();
+}

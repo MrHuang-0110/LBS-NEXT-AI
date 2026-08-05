@@ -41,6 +41,7 @@ typedef struct {
 void battery_manager_init(void);
 void update_battery_voltage(float new_voltage);
 void check_battery_with_debounce(void);
+void battery_check_callback(void *arg);
 int calculate_battery_percentage(float voltage, float min_v, float max_v);
 float get_bat_filtered_volatge(void);
 #endif
