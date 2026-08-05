@@ -52,5 +52,10 @@ void usb_cdc_init(void);
 void reset_usb_parser(void);
 void usb_event_connect_callback(void *arg);
 void usb_event_receive_callback(void *arg);
+
+/* Task15: USB 帧分发注册点 —— middleware 不直接调用 protocol 实现，
+ * 由 protocol/cmd.c 注册帧处理器，收到完整协议帧后回调分发 */
+typedef void (*UsbFrameHandler)(_AGREEMENT *frame, void (*tx)(void*, uint16_t));
+void Usb_RegisterFrameHandler(UsbFrameHandler handler);
 #endif 
 

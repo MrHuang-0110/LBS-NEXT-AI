@@ -254,6 +254,15 @@ void reset_usb_parser(void)
 	 frame_parser_init(&usb_message.usb_parser);
 }
 
+/* Task15: 帧处理器注册点 —— middleware 侧不直接调用 protocol 的 Cmd_ProcessFrame，
+ * 由 protocol/cmd.c 经 Usb_RegisterFrameHandler 注册分发回调 */
+static UsbFrameHandler s_usb_frame_handler = NULL;
+
+void Usb_RegisterFrameHandler(UsbFrameHandler handler)
+{
+    s_usb_frame_handler = handler;
+}
+
  
 USBD_HandleTypeDef USBD_Device;             /* USB Device???????? */
  
@@ -302,9 +311,12 @@ void usb_event_receive_callback(void *arg) {
 	  while (message->g_user_usb_rx_len--){
       if(frame_parser_process_byte(&message->usb_parser, *data++)){
 				_AGREEMENT frame;
-			 if(dataAgreeAnalys(&frame,message->g_user_usb_rx_buffer,message->g_sys_usb_rx_len) == AGREE_MEN_OK)
+				if(dataAgreeAnalys(&frame,message->g_user_usb_rx_buffer,message->g_sys_usb_rx_len) == AGREE_MEN_OK)
 			 {
-					Cmd_ProcessFrame(&frame);
+					if (s_usb_frame_handler != NULL)
+					{
+						s_usb_frame_handler(&frame, cdc_vcp_data_tx);
+					}
 			 }
      }
 	 }

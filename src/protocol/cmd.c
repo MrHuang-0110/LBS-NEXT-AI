@@ -14,6 +14,7 @@
 #include "cmd.h"
 #include "at.h"
 #include "drv_comm.h"
+#include "usbd_cdc_interface.h"
 #include <stdint.h>
 
 #define USB_CMD_LINE_MAX        96U
@@ -128,6 +129,14 @@ void Cmd_PollCallback(void *arg)
     Cmd_PollBt();
 }
 
+/* Task15: USB 帧桥 —— middleware 的 usb_event_receive_callback 经注册点回调到本层，
+ * protocol 不再被 middleware 直接调用（tx 发送函数由 middleware 自身持有，本层忽略） */
+static void s_usb_frame_bridge(_AGREEMENT *frame, void (*tx)(void*, uint16_t))
+{
+    (void)tx;
+    Cmd_ProcessFrame(frame);
+}
+
 void Cmd_Init(void)
 {
     DrvUsbRing_Init();
@@ -135,4 +144,5 @@ void Cmd_Init(void)
     s_ymodem_active = 0U;
     s_usb_idx = 0U;
     s_bt_idx = 0U;
+    Usb_RegisterFrameHandler(s_usb_frame_bridge);
 }
