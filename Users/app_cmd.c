@@ -566,3 +566,12 @@ void AppCmd_PollBt(void)
         app_feed_byte(b, s_bt_line, &s_bt_idx, BT_CMD_LINE_MAX, DRV_COMM_UART5);
     }
 }
+
+/* Task5: cmd_poll 事件回调（TIM6 ISR，阈值 1 tick）。VM 阻塞期间命令轮询保持实时。
+ * 内部沿用 AppCmd_PollUsb/PollBt 原有 s_ymodem_active/s_bt_at_busy 门控，行为不变。 */
+void app_cmd_poll_callback(void *arg)
+{
+    (void)arg;
+    AppCmd_PollUsb();
+    AppCmd_PollBt();
+}

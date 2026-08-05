@@ -37,7 +37,8 @@ static EVENT_MANAGER event_t[] = {
  {"beep", 1, beep_update, NULL},
  {"key_middle_event", 1, key_middle_callback, NULL},
  {"monitor_event", 1, monitor_call_back, NULL},
- {"battery_check", 600, battery_check_callback, NULL}
+ {"battery_check", 600, battery_check_callback, NULL},
+ {"cmd_poll", 1, app_cmd_poll_callback, NULL}
 };
 
 static uint8_t check_swd_config(void)
@@ -216,8 +217,6 @@ int main(void)
         {
             (void)AppPika_Start();
         }
-        AppCmd_PollUsb();
-        AppCmd_PollBt();
         //HAL_Delay(5);
     }
 }
