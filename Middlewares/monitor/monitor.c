@@ -124,15 +124,23 @@ static uint8_t monitor_build_json(void)
 
 void monitor_call_back(void *arg)
 {
-    (void)arg;
-    s_monitor_pending = 1U;
-}
-
-void Monitor_Poll(void)
-{
     uint32_t now;
-    uint8_t need_usb;
-    uint8_t need_bt;
+    uint8_t need_usb = 0U;
+    uint8_t need_bt = 0U;
+
+    (void)arg;
+
+    /* 保持原 TIM6 tick 置位语义：监控活跃期每次事件回调置位 pending，USB 发送成功后清零
+     * （原 monitor_call_back 的置位逻辑随函数体整体移入，必须保留否则监控永不发送） */
+    s_monitor_pending = 1U;
+
+    /* TEMP-MEASURE: 上板实测后移除（Task4 Step3 风险门禁）
+     * DWT 使能并清零 CYCCNT，函数末尾统计本回调(ISR)执行耗时；
+     * 仅当 > 3000 cycles(≈41us@72MHz, tick 预算 1.67ms≈120000 cycles)
+     * 时经 USB 打印，正常运行时无输出、不影响行为。 */
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+    DWT->CYCCNT = 0U;
 
     if (AppMonitor_IsUploadPaused() != 0U)
     {
@@ -140,9 +148,6 @@ void Monitor_Poll(void)
     }
 
     now = HAL_GetTick();
-    need_usb = 0U;
-    need_bt = 0U;
-
     if ((s_monitor_pending != 0U) &&
         ((now - s_usb_monitor_last_ms) >= MONITOR_USB_SEND_PERIOD_MS))
     {
@@ -183,4 +188,10 @@ void Monitor_Poll(void)
         }
     }
 #endif
+
+    /* TEMP-MEASURE: 上板实测后移除 —— 仅当 ISR 时长超预算才打印（N 应 < 3000） */
+    if (DWT->CYCCNT > 3000U)
+    {
+        (void)usb_printf("[mon] isr %u cyc\r\n", (unsigned)(DWT->CYCCNT));
+    }
 }

@@ -216,7 +216,6 @@ int main(void)
         {
             (void)AppPika_Start();
         }
-        Monitor_Poll();
         AppCmd_PollUsb();
         AppCmd_PollBt();
         //HAL_Delay(5);

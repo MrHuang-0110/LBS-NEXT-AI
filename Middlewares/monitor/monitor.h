@@ -73,5 +73,4 @@ bool monitor_generate_report(MonitorManager* manager);
 void monitor_output_report(MonitorManager* manager);
 														
 void monitor_call_back(void*arg);
-void Monitor_Poll(void);
 #endif // __MONITOR_H

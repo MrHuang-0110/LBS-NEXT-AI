@@ -64,14 +64,14 @@ void pika_hook_instruct(void)
 
     AppPika_CheckAbort();
 
-    /* 每 2 次钩子触发（约 100 条指令）轮询一次，确保脚本阻塞时不丢监控 */
+    /* 每 2 次钩子触发（约 100 条指令）轮询一次 USB/BT 命令，确保脚本阻塞时不丢命令
+     * （监控上报已移入 monitor_event 事件回调，TIM6 ISR 内直接发送，不再依赖本 hook） */
     s_hook_cnt++;
     if ((s_hook_cnt & 1U) == 0U)
     {
         return;
     }
 
-    Monitor_Poll();
     AppCmd_PollUsb();
     AppCmd_PollBt();
 }
