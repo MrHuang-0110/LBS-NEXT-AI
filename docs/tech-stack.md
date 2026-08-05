@@ -58,7 +58,7 @@ ISR/事件回调中禁止执行耗时/阻塞操作（写 Flash、忙等、关电
 |------|------|
 | `src/business/` | 业务层：`app/`（main.c 事件注册/挂起消费、app_cmd、boot_param）、`devices/`（beep/blue/color/motor/touch/ultrasion + matrix）、`pika/`（PikaPython 运行时 + 脚本 Flash 持久化 + ExternLib 绑定） |
 | `src/driver/` | 驱动层：`bsp/`（adc_sample/key/led/ir_reflect/spi/iic/stmflash/wdg/btim 等）、`sys/`（delay/sys/usart）、`chip/`（tm1640/w25q80） |
-| `src/middleware/` | 中间层：device_pool（注册表）、bat_manager、drv_comm、event_manager、file_manager、fatfs、USB、RTC、drv_mem/malloc |
+| `src/middleware/` | 中间层：device_pool（注册表）、bat_manager、drv_comm、event_manager、file_manager、USB、RTC、drv_mem/malloc |
 | `src/protocol/` | 协议层：at、cmd（`cmd_poll`）、frame、monitor、ymodem、json-maker |
 | `python/` | PikaPython 主机端：main.py、*.pyi 绑定、pikascript-core/lib/api |
 | `tools/` | 部署/升级工具脚本（烧录、脚本部署、copy_bin） |
