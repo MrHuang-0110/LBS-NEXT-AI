@@ -8,8 +8,8 @@
 #include "string.h"
 #include "malloc.h"
 #include "protocol.h"
-#include "./SYSTEM/usart/usart.h"
-#include "./SYSTEM/delay/delay.h"
+#include "usart.h"
+#include "delay.h"
 
 static uint8_t blue_uart_send(UART_HandleTypeDef *huart, const uint8_t *data, uint16_t len)
 {

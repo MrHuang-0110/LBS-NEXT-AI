@@ -1,6 +1,6 @@
 #ifndef __TOUCH_H
 #define __TOUCH_H
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 #include "stdbool.h"
 #include "deviceidentify.h"
 

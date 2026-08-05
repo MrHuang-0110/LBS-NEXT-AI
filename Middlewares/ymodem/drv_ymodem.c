@@ -1,7 +1,7 @@
 #include "drv_ymodem.h"
 #include "drv_mem.h"
 #include "drv_bt_config.h"
-#include "./SYSTEM/delay/delay.h"
+#include "delay.h"
 #include "stm32f1xx_hal.h"
 #include <string.h>
 

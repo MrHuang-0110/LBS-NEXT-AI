@@ -1,6 +1,6 @@
 #ifndef __COLOR_H
 #define __COLOR_H
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 #include "stdbool.h"
 #include "deviceidentify.h"
 typedef int FRESULT;

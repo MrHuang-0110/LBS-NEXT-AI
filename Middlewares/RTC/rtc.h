@@ -27,7 +27,7 @@
 #ifndef __RTC_H
 #define __RTC_H
 
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 
 
 /* 时间结构体, 包括年月日周时分秒等信息 */

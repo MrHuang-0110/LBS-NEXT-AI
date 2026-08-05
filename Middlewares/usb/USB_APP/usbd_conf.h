@@ -51,8 +51,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "malloc.h"
-#include "./SYSTEM/sys/sys.h"
-#include "./SYSTEM/delay/delay.h"
+#include "sys.h"
+#include "delay.h"
 
 #include "stm32f1xx_hal_pcd.h"
 

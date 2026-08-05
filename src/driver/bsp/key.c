@@ -1,6 +1,6 @@
 
-#include "./BSP/KEY/key.h"
-#include "./SYSTEM/delay/delay.h"
+#include "key.h"
+#include "delay.h"
 #include "event_manager.h"
 
 volatile bool start_py = false;

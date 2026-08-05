@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE,PIKA_CONFIG_ENABLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Users;..\..\Drivers;..\..\Drivers\BSP;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\CMSIS\Include;..\..\Middlewares\event_manager;..\..\Drivers\BSP\LED;..\..\Drivers\BSP\TIMER;..\..\Drivers\BSP\KEY;..\..\Middlewares\malloc;..\..\Middlewares\usb\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Middlewares\usb\STM32_USB_Device_Library\Core\Inc;..\..\Middlewares\usb\USB_APP;..\..\Middlewares\usb\USB_HAL;..\..\Middlewares\protocol;..\..\Drivers\BSP\STMFLASH;..\..\python\pikascript-core;..\..\python\pikascript-api;..\..\python\pikascript-lib\PikaStdLib;..\..\Drivers\BSP\ADC;..\..\Drivers\BSP\IR;..\..\Drivers\BSP\IIC;..\..\Drivers\BSP\SPI;..\..\Middlewares\deviceIdentify;..\..\application\beep;..\..\application\motor;..\..\Drivers\BSP\WDG;..\..\application\blue;..\..\application\color;..\..\application\touch;..\..\application\ultrasion;..\..\Middlewares\lbs_file_manager;..\..\Middlewares\monitor;..\..\Middlewares\bat_manager;..\..\Middlewares\RTC;..\..\Middlewares\ymodem;..\..\Middlewares\stubs</IncludePath>
+              <IncludePath>..\..\Users;..\..\Drivers;..\..\src\driver\bsp;..\..\src\driver\sys;..\..\src\driver\chip;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\CMSIS\Include;..\..\Middlewares\event_manager;..\..\Middlewares\malloc;..\..\Middlewares\usb\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Middlewares\usb\STM32_USB_Device_Library\Core\Inc;..\..\Middlewares\usb\USB_APP;..\..\Middlewares\usb\USB_HAL;..\..\Middlewares\protocol;..\..\python\pikascript-core;..\..\python\pikascript-api;..\..\python\pikascript-lib\PikaStdLib;..\..\Middlewares\deviceIdentify;..\..\application\beep;..\..\application\motor;..\..\application\blue;..\..\application\color;..\..\application\touch;..\..\application\ultrasion;..\..\Middlewares\lbs_file_manager;..\..\Middlewares\monitor;..\..\Middlewares\bat_manager;..\..\Middlewares\RTC;..\..\Middlewares\ymodem;..\..\Middlewares\stubs</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -432,57 +432,57 @@
             <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\LED\led.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\led.c</FilePath>
             </File>
             <File>
               <FileName>drv_led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\LED\drv_led.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\drv_led.c</FilePath>
             </File>
             <File>
               <FileName>drv_flash_storage.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\drv_flash_storage.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\drv_flash_storage.c</FilePath>
             </File>
             <File>
               <FileName>btim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\TIMER\btim.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\btim.c</FilePath>
             </File>
             <File>
               <FileName>key.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\KEY\key.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\key.c</FilePath>
             </File>
             <File>
               <FileName>stmflash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\STMFLASH\stmflash.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\stmflash.c</FilePath>
             </File>
             <File>
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\ADC\adc.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\adc.c</FilePath>
             </File>
             <File>
               <FileName>drv_ir_reflect.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\IR\drv_ir_reflect.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\drv_ir_reflect.c</FilePath>
             </File>
             <File>
               <FileName>iic.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\IIC\iic.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\iic.c</FilePath>
             </File>
             <File>
               <FileName>spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\SPI\spi.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\spi.c</FilePath>
             </File>
             <File>
               <FileName>wdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\WDG\wdg.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\wdg.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -542,17 +542,32 @@
             <File>
               <FileName>sys.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\SYSTEM\sys\sys.c</FilePath>
+              <FilePath>..\..\src\driver\sys\sys.c</FilePath>
             </File>
             <File>
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\SYSTEM\delay\delay.c</FilePath>
+              <FilePath>..\..\src\driver\sys\delay.c</FilePath>
             </File>
             <File>
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\SYSTEM\usart\usart.c</FilePath>
+              <FilePath>..\..\src\driver\sys\usart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>src/driver/chip</GroupName>
+          <Files>
+            <File>
+              <FileName>tm1640.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\driver\chip\tm1640.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25q80.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\driver\chip\w25q80.c</FilePath>
             </File>
           </Files>
         </Group>

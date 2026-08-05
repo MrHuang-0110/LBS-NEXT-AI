@@ -1,7 +1,7 @@
 #ifndef __SPI_H
 #define __SPI_H
 
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 
 
 #define SPI2_SCK_GPIO_PORT              GPIOB

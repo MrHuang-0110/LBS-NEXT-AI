@@ -11,9 +11,9 @@
 #include "bat_manager.h"
 #include "drv_ir_reflect.h"
 #include "drv_comm.h"
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 #if WIALL_HARDWARE_ENABLE
-#include "./BSP/KEY/key.h"
+#include "key.h"
 #endif
 
 #define HUB_MONITOR_PORT_NUM        2U

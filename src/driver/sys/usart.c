@@ -1,7 +1,7 @@
  
-#include "./SYSTEM/sys/sys.h"
-#include "./SYSTEM/usart/usart.h"
-#include "./SYSTEM/delay/delay.h"
+#include "sys.h"
+#include "usart.h"
+#include "delay.h"
 #include "protocol.h"
 #include "deviceIdentify.h"
 #include "drv_comm.h"

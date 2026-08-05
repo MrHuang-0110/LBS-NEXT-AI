@@ -1,5 +1,5 @@
 #include "drv_ir_reflect.h"
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 
 #define IR_EMIT_GPIO_PORT           GPIOC
 #define IR_EMIT_GPIO_PIN            GPIO_PIN_14

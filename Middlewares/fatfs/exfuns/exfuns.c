@@ -1,7 +1,7 @@
  
 #include "string.h"
 #include "stdlib.h"
-#include "./SYSTEM/usart/usart.h"
+#include "usart.h"
 #include "exfuns.h"
 #include "fattester.h"
 #include "ff.h" 

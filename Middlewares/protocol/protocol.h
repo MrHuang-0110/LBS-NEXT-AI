@@ -1,6 +1,6 @@
 #ifndef __PROTOCOL_H
 #define __PROTOCOL_H
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 #include "stdbool.h"
 #include "stdlib.h"
 #include "string.h"

@@ -3,7 +3,7 @@
 #ifndef __STMFLASH_H
 #define __STMFLASH_H
 
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 
  
 /* FLASHÆðÊ¼µØÖ· */

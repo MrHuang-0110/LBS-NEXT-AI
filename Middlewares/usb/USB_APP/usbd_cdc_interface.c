@@ -29,8 +29,8 @@
 #include "event_manager.h"
 #include "drv_comm.h"
 #include "app_cmd.h"
-#include "./SYSTEM/usart/usart.h"
-#include "./SYSTEM/delay/delay.h"
+#include "usart.h"
+#include "delay.h"
  
 volatile bool usb_link = false;
 /* USB????????????????? */

@@ -22,7 +22,7 @@
  ****************************************************************************************************
  */
 
-#include "./BSP/WDG/wdg.h"
+#include "wdg.h"
 #include "stdbool.h"
 
 IWDG_HandleTypeDef iwdg_handle; /* ¶ÀÁ¢¿´ÃÅ¹·¾ä±ú */

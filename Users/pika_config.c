@@ -1,6 +1,6 @@
 #include "pika_config.h"
 #include "malloc.h"
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 #include "stdarg.h"
 extern void usb_printf(char *fmt, ...);
 void pika_platform_free(void* ptr) {

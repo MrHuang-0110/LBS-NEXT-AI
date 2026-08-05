@@ -3,7 +3,7 @@
 #include "drv_led.h"
 #include "bat_manager.h"
 
-#include "./SYSTEM/delay/delay.h"
+#include "delay.h"
 
 extern void usb_printf(char* fmt,...);
 static BatteryManager battery_mgr = {0};

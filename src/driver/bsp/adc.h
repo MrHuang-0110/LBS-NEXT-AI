@@ -1,7 +1,7 @@
 #ifndef __ADC_H
 #define __ADC_H
 
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 
 #define ADC_ADCX                            ADC1
 #define ADC_ADCX_CHY_CLK_ENABLE()           do{ __HAL_RCC_ADC1_CLK_ENABLE(); }while(0)

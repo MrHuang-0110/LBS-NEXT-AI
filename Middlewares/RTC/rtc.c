@@ -1,6 +1,6 @@
  
 #include "rtc.h"
-#include "./SYSTEM/delay/delay.h"
+#include "delay.h"
 
 RTC_HandleTypeDef g_rtc_handle; /* RTC控制句柄 */
 _calendar_obj calendar;         /* 时间结构体 */

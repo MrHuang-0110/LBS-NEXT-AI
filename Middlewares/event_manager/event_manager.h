@@ -3,7 +3,7 @@
 
 #include "stdbool.h"
 #include "string.h"
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 
 #define EVENT_MAX 16
 

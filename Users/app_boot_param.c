@@ -1,5 +1,5 @@
 #include "app_boot_param.h"
-#include "./SYSTEM/delay/delay.h"
+#include "delay.h"
 #include "usbd_conf.h"
 #include "usbd_core.h"
 #include "stm32f1xx_hal.h"

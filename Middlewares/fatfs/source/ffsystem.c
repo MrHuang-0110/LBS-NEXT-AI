@@ -1,6 +1,6 @@
  
 #include "stdlib.h"
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 #include "ff.h"
 #include "malloc.h"
 

@@ -1,7 +1,7 @@
 
 
-#include "./SYSTEM/usart/usart.h"
-#include "./SYSTEM/delay/delay.h"
+#include "usart.h"
+#include "delay.h"
 #include "stmflash.h"
 
 

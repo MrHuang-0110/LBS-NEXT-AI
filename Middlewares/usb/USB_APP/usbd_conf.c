@@ -27,8 +27,8 @@
 #include "usbd_def.h"
 #include "usbd_cdc.h"
 #include "stm32f1xx_hal_pcd.h"
-#include "./SYSTEM/usart/usart.h"
-#include "./SYSTEM/delay/delay.h"
+#include "usart.h"
+#include "delay.h"
 
 
 /* PCD∂®“Â */

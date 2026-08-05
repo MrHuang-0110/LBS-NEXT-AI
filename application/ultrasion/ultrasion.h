@@ -1,7 +1,7 @@
 #ifndef __ULTRASION_H
 #define __ULTRASION_H
 
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 #include "stdbool.h"
 #include "deviceidentify.h"
 

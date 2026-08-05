@@ -1,8 +1,8 @@
 #include "drv_led.h"
 #include "drv_bt_config.h"
 #include "key.h"
-#include "./SYSTEM/sys/sys.h"
-#include "./SYSTEM/delay/delay.h"
+#include "sys.h"
+#include "delay.h"
 #include "stm32f1xx_hal.h"
 
 #define LED_ON                      0U

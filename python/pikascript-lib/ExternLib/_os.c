@@ -4,7 +4,7 @@
 #include "math.h"
 #include "motor.h"
 #include "drv_led.h"
-#include "./SYSTEM/delay/delay.h"
+#include "delay.h"
 pika_float _os_timer(PikaObj *self)
 {
   return getUserCPUTick();

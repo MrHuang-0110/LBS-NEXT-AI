@@ -1,7 +1,7 @@
 #include "drv_comm.h"
 #include "drv_bt_config.h"
 #include "usbd_cdc_interface.h"
-#include "./SYSTEM/delay/delay.h"
+#include "delay.h"
 #include "stm32f1xx_hal.h"
 #include <string.h>
 

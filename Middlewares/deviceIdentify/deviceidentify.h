@@ -1,7 +1,7 @@
 #ifndef __DEVICEIDENTIFY_H
 #define __DEVICEIDENTIFY_H
 
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 
  
  

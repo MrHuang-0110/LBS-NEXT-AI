@@ -2,7 +2,7 @@
 #ifndef __MALLOC_H
 #define __MALLOC_H
 
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 
 /* 定义1个内存池 */
 #define SRAMIN      0       /* 内部SRAM, 共64KB */

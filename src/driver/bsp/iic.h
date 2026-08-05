@@ -1,6 +1,6 @@
 #ifndef __IIC_H
 #define __IIC_H
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 
 
 #define IIC_SCL_GPIO_PORT               GPIOB

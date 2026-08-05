@@ -12,8 +12,8 @@
 #include "drv_mem.h"
 #include "beep.h"
 #include "usbd_cdc_interface.h"
-#include "./SYSTEM/usart/usart.h"
-#include "./SYSTEM/delay/delay.h"
+#include "usart.h"
+#include "delay.h"
 #include <string.h>
 #include <stdio.h>
 

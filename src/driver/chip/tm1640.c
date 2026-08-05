@@ -1,7 +1,7 @@
 #include "tm1640.h"
 #include "stm32f1xx_hal.h"
 #include <string.h>
-#include "./SYSTEM/delay/delay.h"
+#include "delay.h"
 
 // 全局配置
 static TM1640_Config tm1640_config;

@@ -2,7 +2,7 @@
 #define __MOTOR_H
 #include "btim.h"
 #include "malloc.h"
- #include "./SYSTEM/delay/delay.h"
+ #include "delay.h"
 #include "deviceidentify.h"
 
 #define DEVICE_MOTOR_ID 0xA1

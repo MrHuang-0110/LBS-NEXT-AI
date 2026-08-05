@@ -3,7 +3,7 @@
 #ifndef __EXFUNS_H
 #define __EXFUNS_H
 
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 #include "ff.h"
 #include "stdbool.h"
 

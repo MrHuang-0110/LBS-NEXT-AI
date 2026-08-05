@@ -25,7 +25,7 @@
 #ifndef __BTIM_H
 #define __BTIM_H
 
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 
 #define PWM_MAX (100)
 

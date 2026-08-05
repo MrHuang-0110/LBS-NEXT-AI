@@ -1,9 +1,9 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
-#include "./SYSTEM/sys/sys.h"
-#include "./SYSTEM/usart/usart.h"
-#include "./SYSTEM/delay/delay.h"
+#include "sys.h"
+#include "usart.h"
+#include "delay.h"
 #include "malloc.h"
 #include "btim.h"
 #include "led.h"
