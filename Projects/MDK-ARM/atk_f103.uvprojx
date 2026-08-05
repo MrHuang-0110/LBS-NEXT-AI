@@ -81,7 +81,7 @@
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
-            <RunUserProg2>1</RunUserProg2>
+            <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>fromelf.exe --bin -o "$L@L.bin" "#L"</UserProg1Name>
             <UserProg2Name>python -u "..\..\tools\copy_bin_to.py" "$L@L.bin"</UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE,PIKA_CONFIG_ENABLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Users;..\..\Drivers;..\..\Drivers\BSP;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\CMSIS\Include;..\..\Middlewares\event_manager;..\..\Drivers\BSP\LED;..\..\Drivers\BSP\TIMER;..\..\Drivers\BSP\KEY;..\..\Middlewares\malloc;..\..\Middlewares\usb\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Middlewares\usb\STM32_USB_Device_Library\Core\Inc;..\..\Middlewares\usb\USB_APP;..\..\Middlewares\usb\USB_HAL;..\..\Middlewares\protocol;..\..\Drivers\BSP\STMFLASH;..\..\python\pikascript-core;..\..\python\pikascript-api;..\..\python\pikascript-lib\PikaStdLib;..\..\Drivers\BSP\ADC;..\..\Drivers\BSP\IR;..\..\Drivers\BSP\IIC;..\..\Drivers\BSP\SPI;..\..\Middlewares\deviceIdentify;..\..\application\beep;..\..\application\motor;..\..\Drivers\BSP\WDG;..\..\application\blue;..\..\application\color;..\..\application\touch;..\..\application\ultrasion;..\..\Middlewares\lbs_file_manager;..\..\Middlewares\monitor;..\..\Middlewares\bat_manager;..\..\Middlewares\RTC;..\..\Middlewares\ymodem;..\..\Middlewares\stubs</IncludePath>
+              <IncludePath>..\..\Users;..\..\Drivers;..\..\src\driver\bsp;..\..\src\driver\sys;..\..\src\driver\chip;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\CMSIS\Include;..\..\Middlewares\usb\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Middlewares\usb\STM32_USB_Device_Library\Core\Inc;..\..\Middlewares\usb\USB_HAL;..\..\python\pikascript-core;..\..\python\pikascript-api;..\..\python\pikascript-lib\PikaStdLib;..\..\Middlewares\ymodem;..\..\Middlewares\stubs;..\..\src\middleware;..\..\src\protocol;..\..\src\business\devices;..\..\src\business\devices\matrix;..\..\src\business\pika;..\..\src\business\pika\ExternLib;..\..\src\business\app</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -392,37 +392,37 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>application</GroupName>
+          <GroupName>business/devices</GroupName>
           <Files>
             <File>
               <FileName>beep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\application\beep\beep.c</FilePath>
+              <FilePath>..\..\src\business\devices\beep.c</FilePath>
             </File>
             <File>
               <FileName>motor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\application\motor\motor.c</FilePath>
+              <FilePath>..\..\src\business\devices\motor.c</FilePath>
             </File>
             <File>
               <FileName>blue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\application\blue\blue.c</FilePath>
+              <FilePath>..\..\src\business\devices\blue.c</FilePath>
             </File>
             <File>
               <FileName>color.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\application\color\color.c</FilePath>
+              <FilePath>..\..\src\business\devices\color.c</FilePath>
             </File>
             <File>
               <FileName>touch.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\application\touch\touch.c</FilePath>
+              <FilePath>..\..\src\business\devices\touch.c</FilePath>
             </File>
             <File>
               <FileName>ultrasion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\application\ultrasion\ultrasion.c</FilePath>
+              <FilePath>..\..\src\business\devices\ultrasion.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -432,57 +432,62 @@
             <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\LED\led.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\led.c</FilePath>
             </File>
             <File>
               <FileName>drv_led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\LED\drv_led.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\drv_led.c</FilePath>
             </File>
             <File>
               <FileName>drv_flash_storage.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\drv_flash_storage.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\drv_flash_storage.c</FilePath>
             </File>
             <File>
               <FileName>btim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\TIMER\btim.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\btim.c</FilePath>
             </File>
             <File>
               <FileName>key.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\KEY\key.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\key.c</FilePath>
             </File>
             <File>
               <FileName>stmflash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\STMFLASH\stmflash.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\stmflash.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc_sample.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\driver\bsp\adc_sample.c</FilePath>
             </File>
             <File>
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\ADC\adc.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\adc.c</FilePath>
             </File>
             <File>
               <FileName>drv_ir_reflect.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\IR\drv_ir_reflect.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\drv_ir_reflect.c</FilePath>
             </File>
             <File>
               <FileName>iic.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\IIC\iic.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\iic.c</FilePath>
             </File>
             <File>
               <FileName>spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\SPI\spi.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\spi.c</FilePath>
             </File>
             <File>
               <FileName>wdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\BSP\WDG\wdg.c</FilePath>
+              <FilePath>..\..\src\driver\bsp\wdg.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -490,49 +495,54 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Users\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_boot_param.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Users\app_boot_param.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_pika_runtime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Users\app_pika_runtime.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Users\app_cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f1xx_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Users\stm32f1xx_it.c</FilePath>
-            </File>
-            <File>
               <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Source\Templates\system_stm32f1xx.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>business/app</GroupName>
+          <Files>
             <File>
-              <FileName>pika_config.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Users\pika_config.c</FilePath>
+              <FilePath>..\..\src\business\app\main.c</FilePath>
             </File>
             <File>
-              <FileName>pika_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\Users\pika_config.h</FilePath>
+              <FileName>app_cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\business\app\app_cmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_boot_param.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\business\app\app_boot_param.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\business\app\stm32f1xx_it.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>business/pika</GroupName>
+          <Files>
+            <File>
+              <FileName>app_pika_runtime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\business\pika\app_pika_runtime.c</FilePath>
             </File>
             <File>
               <FileName>app_pika_script_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Users\app_pika_script_flash.c</FilePath>
+              <FilePath>..\..\src\business\pika\app_pika_script_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>pika_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\business\pika\pika_config.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -542,17 +552,32 @@
             <File>
               <FileName>sys.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\SYSTEM\sys\sys.c</FilePath>
+              <FilePath>..\..\src\driver\sys\sys.c</FilePath>
             </File>
             <File>
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\SYSTEM\delay\delay.c</FilePath>
+              <FilePath>..\..\src\driver\sys\delay.c</FilePath>
             </File>
             <File>
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\SYSTEM\usart\usart.c</FilePath>
+              <FilePath>..\..\src\driver\sys\usart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>src/driver/chip</GroupName>
+          <Files>
+            <File>
+              <FileName>tm1640.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\driver\chip\tm1640.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25q80.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\driver\chip\w25q80.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -657,42 +682,62 @@
             <File>
               <FileName>event_manager.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\event_manager\event_manager.c</FilePath>
+              <FilePath>..\..\src\middleware\event_manager.c</FilePath>
             </File>
             <File>
               <FileName>malloc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\malloc\malloc.c</FilePath>
+              <FilePath>..\..\src\middleware\malloc.c</FilePath>
             </File>
             <File>
-              <FileName>protocol.c</FileName>
+              <FileName>frame.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\protocol\protocol.c</FilePath>
+              <FilePath>..\..\src\protocol\frame.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\protocol\cmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>at.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\protocol\at.c</FilePath>
+            </File>
+            <File>
+              <FileName>monitor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\protocol\monitor.c</FilePath>
+            </File>
+            <File>
+              <FileName>json-maker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\protocol\json-maker.c</FilePath>
+            </File>
+            <File>
+              <FileName>ymodem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\protocol\ymodem.c</FilePath>
             </File>
             <File>
               <FileName>lbsfilemanager.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\lbs_file_manager\lbsfilemanager.c</FilePath>
+              <FilePath>..\..\src\middleware\lbsfilemanager.c</FilePath>
             </File>
             <File>
-              <FileName>deviceIdentify.c</FileName>
+              <FileName>device_pool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\deviceIdentify\deviceIdentify.c</FilePath>
+              <FilePath>..\..\src\middleware\device_pool.c</FilePath>
             </File>
             <File>
               <FileName>drv_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\ymodem\drv_mem.c</FilePath>
+              <FilePath>..\..\src\middleware\drv_mem.c</FilePath>
             </File>
             <File>
               <FileName>drv_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\ymodem\drv_comm.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_ymodem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\ymodem\drv_ymodem.c</FilePath>
+              <FilePath>..\..\src\middleware\drv_comm.c</FilePath>
             </File>
             <File>
               <FileName>matrix_port_stub.c</FileName>
@@ -705,19 +750,9 @@
               <FilePath>..\..\Middlewares\stubs\_matrix_stub.c</FilePath>
             </File>
             <File>
-              <FileName>json-maker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\monitor\json-maker.c</FilePath>
-            </File>
-            <File>
-              <FileName>monitor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\monitor\monitor.c</FilePath>
-            </File>
-            <File>
               <FileName>bat_manager.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\bat_manager\bat_manager.c</FilePath>
+              <FilePath>..\..\src\middleware\bat_manager.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -757,17 +792,17 @@
             <File>
               <FileName>usbd_cdc_interface.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\usb\USB_APP\usbd_cdc_interface.c</FilePath>
+              <FilePath>..\..\src\middleware\usbd_cdc_interface.c</FilePath>
             </File>
             <File>
               <FileName>usbd_conf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\usb\USB_APP\usbd_conf.c</FilePath>
+              <FilePath>..\..\src\middleware\usbd_conf.c</FilePath>
             </File>
             <File>
               <FileName>usbd_desc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\usb\USB_APP\usbd_desc.c</FilePath>
+              <FilePath>..\..\src\middleware\usbd_desc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -972,32 +1007,32 @@
             <File>
               <FileName>_motor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\python\pikascript-lib\ExternLib\_motor.c</FilePath>
+              <FilePath>..\..\src\business\pika\ExternLib\_motor.c</FilePath>
             </File>
             <File>
               <FileName>_os.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\python\pikascript-lib\ExternLib\_os.c</FilePath>
+              <FilePath>..\..\src\business\pika\ExternLib\_os.c</FilePath>
             </File>
             <File>
               <FileName>_color.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\python\pikascript-lib\ExternLib\_color.c</FilePath>
+              <FilePath>..\..\src\business\pika\ExternLib\_color.c</FilePath>
             </File>
             <File>
               <FileName>_touch.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\python\pikascript-lib\ExternLib\_touch.c</FilePath>
+              <FilePath>..\..\src\business\pika\ExternLib\_touch.c</FilePath>
             </File>
             <File>
               <FileName>_ultrasion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\python\pikascript-lib\ExternLib\_ultrasion.c</FilePath>
+              <FilePath>..\..\src\business\pika\ExternLib\_ultrasion.c</FilePath>
             </File>
             <File>
               <FileName>_key.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\python\pikascript-lib\ExternLib\_key.c</FilePath>
+              <FilePath>..\..\src\business\pika\ExternLib\_key.c</FilePath>
             </File>
             <File>
               <FileName>_random.c</FileName>
@@ -1012,7 +1047,7 @@
             <File>
               <FileName>_beep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\python\pikascript-lib\ExternLib\_beep.c</FilePath>
+              <FilePath>..\..\src\business\pika\ExternLib\_beep.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1020,9 +1055,9 @@
           <GroupName>Readme</GroupName>
           <Files>
             <File>
-              <FileName>readme.txt</FileName>
+              <FileName>README.md</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\readme.txt</FilePath>
+              <FilePath>..\..\README.md</FilePath>
             </File>
           </Files>
         </Group>

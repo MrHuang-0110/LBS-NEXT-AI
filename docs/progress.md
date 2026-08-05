@@ -27,6 +27,14 @@
 - 设计→实施→审查→测试全流程完成，13 个单元测试全部 PASS
 - 脚本区 `0x08060000-0x08067FFF`，32KB 单槽，CRC32 校验，仅长按关机保存、启动自动装载不运行
 
+## 2026-08-05 — 全项目重构完成 ✅（Task 1-21，分支 main-work）
+
+- **四层分层**：代码全部归位 `src/driver|middleware|protocol|business`（bsp/sys/chip → driver；bat_manager/device_pool/drv_comm/event_manager 等 → middleware；at/cmd/frame/monitor/ymodem → protocol；app/devices/pika → business），Keil 工程同步（提交 `c2907a6` `e9a1fa5` `c83e45e` `e3118d6` `f32577d`）
+- **实时任务事件化**：TIM6 事件驱动，`battery_check`（`da68fef`）、按键状态机 `key_middle_event`（`e36c341`）、`monitor_event`（`5aab3d0`）、`cmd_poll`（`437ae0e`），hook 精简为非实时兜底（`e1a8952`）
+- **接口抽象**：`device_pool` 注册表化（`5e1108a`）、monitor 经 device_pool 读传感器（`4959d34`）、blue 走 DrvComm（`e53eca3`）、USB 回调分发（`eaaef5e`）、fatfs/exfuns 回调访问 UI（`f2dcc92`）
+- **冗余治理**：蓝牙 AT 两套统一到 `protocol/at`（`75a4099`）、ADC 采样公共化（`3f30d4c`）、btim 空实现清理（`a0e8e01`）、遗留 .bak/死代码/空目录删除（`e64522f`）、中文注释编码修复（`dc66eb3`）
+- **验证**：全量编译 **0 Error(s), 0 Warning(s)**（Keil F7，`Output/atk_f103.bin` 生成）；host 测试 `tests/test_script_flash.c` **13/13 PASS**（gcc 编译零警告）；功能对照表见 `docs/refactor-function-mapping.md`
+
 ## 待办 / 风险
 
 - [ ] Keil F7 编译验证自定义散列文件（atk_f103_script.sct），烧录测试脚本持久化流程（手动）

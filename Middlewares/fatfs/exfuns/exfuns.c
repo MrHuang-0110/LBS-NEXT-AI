@@ -1,20 +1,27 @@
  
 #include "string.h"
 #include "stdlib.h"
-#include "./SYSTEM/usart/usart.h"
+#include "usart.h"
 #include "exfuns.h"
 #include "fattester.h"
 #include "ff.h" 
 #include "w25q80.h" 
-#include "protocol.h"
+#include "frame.h"
 #include "lbsfilemanager.h"
 #include "key.h"
-#include "ui_manager.h"
 
 #define FILE_MAX_TYPE_NUM       7       
 #define FILE_MAX_SUBT_NUM       7      
 
 static FileInfo file_list[MAX_FILES];
+
+/* ===== Task 16: UI callback (middleware->business decoupling) ===== */
+static ExfunsUiHandler s_ui_handler = NULL;
+
+void Exfuns_RegisterUiHandler(ExfunsUiHandler handler)
+{
+    s_ui_handler = handler;
+}
 
 char *const FILE_TYPE_TBL[FILE_MAX_TYPE_NUM][FILE_MAX_SUBT_NUM] =
 {
@@ -654,8 +661,8 @@ void touchOtherFile(uint8_t index, uint8_t *data, uint16_t length,void (*port_tr
 						{ 							 				   
                is_file = false;
 							 f_close(&fsrc);
-							 ui_manager_add_name(name);
-							 touchFileOKCallBack();
+							 if (s_ui_handler != NULL) { s_ui_handler(EXFUNS_UI_EVT_ADD_NAME, name); }
+							 if (s_ui_handler != NULL) { s_ui_handler(EXFUNS_UI_EVT_FILE_OK, NULL); }
 							 if(index == 0xBC)
 							 { 				 
 							    /*run python*/
@@ -685,7 +692,7 @@ void touchOtherFile(uint8_t index, uint8_t *data, uint16_t length,void (*port_tr
 		  f_close(&fsrc);
 		  f_unlink(name);
 			MultiUart_SendFrame(port_transerf_data, response, 1, response[0]);	
-		  touchFileErrorCallBack();	 
+		  if (s_ui_handler != NULL) { s_ui_handler(EXFUNS_UI_EVT_FILE_ERROR, NULL); }	 
 			 extern void set_event_enable(char*name);
 //	    set_event_enable("monitor_event");
 }

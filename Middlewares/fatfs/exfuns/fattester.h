@@ -27,7 +27,7 @@
 #ifndef __FATTESTER_H
 #define __FATTESTER_H
 
-#include "./SYSTEM/sys/sys.h"
+#include "sys.h"
 #include "ff.h"
 
 
