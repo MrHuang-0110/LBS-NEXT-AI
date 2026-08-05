@@ -217,6 +217,5 @@ int main(void)
         {
             (void)AppPika_Start();
         }
-        //HAL_Delay(5);
     }
 }

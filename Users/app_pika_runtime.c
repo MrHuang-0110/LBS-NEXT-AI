@@ -6,8 +6,6 @@
 #include "usbd_cdc_interface.h"
 #include "drv_led.h"
 #include "key.h"
-#include "monitor.h"
-#include "bat_manager.h"
 extern volatile bool start_py;
 #include <setjmp.h>
 #include <string.h>
@@ -41,8 +39,13 @@ static int pika_magic_is_pyo(const uint8_t *data, uint32_t len)
 
 void pika_hook_instruct(void)
 {
-    /* Task3: 消费挂起关机标志。按键回调（ISR）置位后，脚本运行期间在此执行关机序列
-     * （含 Flash 写入+阻塞动画，禁止在 ISR 内执行） */
+    /* 非实时兜底：监控/命令轮询已移入 TIM6 事件回调（monitor_event/cmd_poll），
+     * VM 阻塞期间仍保持实时；本 hook 仅在脚本执行间隙做轻量停止检查与
+     * 挂起消费（关机序列含 Flash 写入+阻塞动画、cloase_all_motor 含 60ms 忙等，
+     * 均禁止在 ISR 内执行，由 VM 执行间隙兜底消费） */
+    AppPika_CheckAbort();
+
+    /* 长按关机挂起序列（禁止在 ISR 执行，由 VM 执行间隙消费） */
     extern volatile uint8_t g_shutdown_pending;
     if (g_shutdown_pending != 0U)
     {
@@ -51,15 +54,13 @@ void pika_hook_instruct(void)
         app_shutdown_sequence();   /* 不再返回 */
     }
 
-    /* Task3: 消费挂起电机停止标志（cloase_all_motor 含 60ms 忙等，禁止在 ISR 内执行） */
+    /* 短按停止挂起的电机复位（cloase_all_motor 含 60ms 忙等，禁止在 ISR 内执行） */
     extern volatile uint8_t g_motor_stop_pending;
     if (g_motor_stop_pending != 0U)
     {
         g_motor_stop_pending = 0U;
         cloase_all_motor();
     }
-
-    AppPika_CheckAbort();
 }
 
 int AppPika_IsStopRequested(void)
