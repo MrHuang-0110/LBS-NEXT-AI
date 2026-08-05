@@ -19,7 +19,7 @@ void refsh_touch(void* self, void* data)
 				sscanf((const char*)_fd->data,"%d",&mt->touchState);
 }
 
-DEV_TOUCH *create_touch(void)
+SensorBase *create_touch(void)
 { 
  				DEV_TOUCH *touch = mymalloc(SRAMIN,sizeof(DEV_TOUCH));
 	      
@@ -29,5 +29,11 @@ DEV_TOUCH *create_touch(void)
 				strcpy(touch->base.name,"touch"); 
 				touch->touchState = 0;
  
-				return touch;		  
+				return (SensorBase *)touch;		  
+}
+
+void destroy_touch(SensorBase *sensor)
+{
+    DEV_TOUCH *touch = (DEV_TOUCH *)sensor;
+    myfree(SRAMIN, touch);
 }

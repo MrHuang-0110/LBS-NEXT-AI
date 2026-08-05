@@ -30,7 +30,7 @@ void motor_stop(uint8_t id)
 		break;
 	}
 }
-DEV_MOTOR *create_motor(void)
+SensorBase *create_motor(void)
 { 
     DEV_MOTOR *motor = mymalloc(SRAMIN,sizeof(DEV_MOTOR));
     if(motor == NULL) return NULL;
@@ -44,7 +44,12 @@ DEV_MOTOR *create_motor(void)
 				.stop_mode = SILD_STOP,
     };
 		
-    return motor; 
+    return (SensorBase *)motor; 
+}
+void destroy_motor(SensorBase *sensor)
+{
+    DEV_MOTOR *motor = (DEV_MOTOR *)sensor;
+    myfree(SRAMIN, motor);
 }
 DEV_MOTOR *read_motor(void *self)
 {

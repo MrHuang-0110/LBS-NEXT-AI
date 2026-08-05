@@ -5,7 +5,6 @@
 #include "device_pool.h"
 typedef int FRESULT;
 #define FR_OK 0
-#define DEVICE_COLOR_ID          0xA2
 #define DEFAULT_THRESHOLD_VALUE  1000
 
 typedef struct{
@@ -30,7 +29,9 @@ void read_color_cfg(void* self,uint8_t hub_id);
 FRESULT write_color_cfg(int port,CALIBRATION *cal);
 
 DEV_COLOR *read_color(void *self);
-DEV_COLOR *create_color(void);
+SensorBase *create_color(void);
+SensorBase *create_color_cfg(void);
+void destroy_color(SensorBase *sensor);
  
 void color_calibrate(DEV_COLOR *color1,DEV_COLOR *color2,uint32_t time_ms);
 #endif

@@ -1,5 +1,9 @@
 #include "main.h"
 #include "motor.h"
+#include "blue.h"
+#include "ultrasion.h"
+#include "touch.h"
+#include "color.h"
 #include "monitor.h"
 #include "bat_manager.h"
 #include "drv_led.h"
@@ -164,6 +168,13 @@ static void systemInit(void)
     key_init();
     iic_init();
     pwm_init();
+    /* Task12: 设备注册表——业务模块在启动时注册 create/set_param/destroy，
+     * device_pool 通过注册表分发，不再 include 业务头 */
+    DevicePool_Register(DEVICE_MOTOR_ID, create_motor, NULL, destroy_motor);
+    DevicePool_Register(DEVICE_ULTRASION_ID, create_ultrasion, refsh_ultrasion, destroy_ultrasion);
+    DevicePool_Register(DEVICE_COLOR_ID, create_color_cfg, refsh_color, destroy_color);
+    DevicePool_Register(DEVICE_TOUCH_ID, create_touch, refsh_touch, destroy_touch);
+    DevicePool_Register(DEVICE_BLUE_ID, create_blue, refsh_blue, destroy_blue);
     init_identify_dev();
     cloase_all_motor();
     beep_init();

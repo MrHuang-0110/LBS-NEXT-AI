@@ -4,8 +4,6 @@
 #include "stdbool.h"
 #include "device_pool.h"
 
-#define DEVICE_TOUCH_ID 0xA4
-
 typedef struct
 { 
 	 SensorBase base;
@@ -15,5 +13,6 @@ typedef struct
 
 DEV_TOUCH *read_touch(void *self);
 void refsh_touch(void* self, void* data);
-DEV_TOUCH *create_touch(void);
+SensorBase *create_touch(void);
+void destroy_touch(SensorBase *sensor);
 #endif

@@ -101,7 +101,7 @@ void refsh_color(void* self, void* data)
 		}
 }
 
-DEV_COLOR *create_color(void)
+SensorBase *create_color(void)
 { 
  	 DEV_COLOR *color = mymalloc(SRAMIN,sizeof(DEV_COLOR));
 	 memset(color,0,sizeof(DEV_COLOR));
@@ -109,7 +109,22 @@ DEV_COLOR *create_color(void)
 	 memset(color->base.name,0,sizeof(color->base.name));
 	 strcpy(color->base.name,"color"); 
 	 color->color_calibation.thresholdValue = DEFAULT_THRESHOLD_VALUE/2.0f;
-	 return color;
+	 return (SensorBase *)color;
+}
+
+/* 注册表 create 包装：创建后立即按端口号读取颜色校准（等价于原
+ * identify_and_bind 中 DEVICE_COLOR_ID 分支的 read_color_cfg(sensor, hub_id)） */
+SensorBase *create_color_cfg(void)
+{
+    SensorBase *s = create_color();
+    read_color_cfg(s, DevicePool_GetCurrentHubId());
+    return s;
+}
+
+void destroy_color(SensorBase *sensor)
+{
+    DEV_COLOR *color = (DEV_COLOR *)sensor;
+    myfree(SRAMIN, color);
 }
 
 void read_color_cfg(void* self,uint8_t hub_id)

@@ -4,7 +4,6 @@
 #include "device_pool.h"
 
 #define PORT_BLUE    0x08
-#define DEVICE_BLUE_ID      0xAF
 
 typedef struct{
   int blue_init_state,on_off;
@@ -21,7 +20,8 @@ typedef struct{
 }DEV_BLUE;
 
 DEV_BLUE *read_blue(void *self);
-DEV_BLUE *create_blue(void);
+SensorBase *create_blue(void);
+void destroy_blue(SensorBase *sensor);
 void refsh_blue(void* self, void* data);
 void blue_init(void);
 void blue_force_reinit(void);

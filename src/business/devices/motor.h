@@ -4,13 +4,6 @@
 #include "malloc.h"
  #include "delay.h"
 #include "device_pool.h"
-
-#define DEVICE_MOTOR_ID 0xA1
-
-#define PORT_MOTOR_A 0x04
-#define PORT_MOTOR_B 0x05
-#define PORT_MOTOR_C 0x06
-#define PORT_MOTOR_D 0x07
  
 
 typedef enum{ 
@@ -34,7 +27,8 @@ enum{
 
  
 DEV_MOTOR *read_motor(void *self);
-DEV_MOTOR *create_motor(void);
+SensorBase *create_motor(void);
+void destroy_motor(SensorBase *sensor);
 
 void motor_stop(uint8_t id);
 void motor_stopToMode(uint8_t id,uint8_t mode);

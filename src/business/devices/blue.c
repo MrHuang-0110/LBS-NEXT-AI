@@ -185,7 +185,7 @@ void refsh_blue(void *self, void *data)
     }
 }
 
-DEV_BLUE *create_blue(void)
+SensorBase *create_blue(void)
 {
     DEV_BLUE *blue = mymalloc(SRAMIN, sizeof(DEV_BLUE));
     if (blue == NULL)
@@ -197,7 +197,13 @@ DEV_BLUE *create_blue(void)
     memset(blue->base.name, 0, sizeof(blue->base.name));
     strcpy(blue->base.name, "blue");
     blue->huart = getusartHandle(5);
-    return blue;
+    return (SensorBase *)blue;
+}
+
+void destroy_blue(SensorBase *sensor)
+{
+    DEV_BLUE *blue = (DEV_BLUE *)sensor;
+    myfree(SRAMIN, blue);
 }
 
 DEV_BLUE *read_blue(void *self)

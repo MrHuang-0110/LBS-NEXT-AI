@@ -17,7 +17,7 @@ void refsh_ultrasion(void* self, void* data)
 	      sscanf((const char*)_fd->data,"%d/%d",&mt->cm,&mt->dt);
 }
 
-DEV_ULTRASION *create_ultrasion(void)
+SensorBase *create_ultrasion(void)
 { 
  				DEV_ULTRASION *ultrasion = mymalloc(SRAMIN,sizeof(DEV_ULTRASION));
 				memset(ultrasion,0,sizeof(DEV_ULTRASION));
@@ -26,5 +26,11 @@ DEV_ULTRASION *create_ultrasion(void)
 				strcpy(ultrasion->base.name,"ultrasion"); 
 				ultrasion->cm = 0.0f;
  
-				return ultrasion;		  
+				return (SensorBase *)ultrasion;		  
+}
+
+void destroy_ultrasion(SensorBase *sensor)
+{
+    DEV_ULTRASION *ultrasion = (DEV_ULTRASION *)sensor;
+    myfree(SRAMIN, ultrasion);
 }

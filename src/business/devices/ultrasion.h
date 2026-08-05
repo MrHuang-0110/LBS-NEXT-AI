@@ -5,8 +5,6 @@
 #include "stdbool.h"
 #include "device_pool.h"
 
-#define DEVICE_ULTRASION_ID      0xA3
-
 typedef struct
 { 
 	 SensorBase base;
@@ -16,5 +14,6 @@ typedef struct
 
 DEV_ULTRASION *read_ultrasion(void *self);
 void refsh_ultrasion(void* self, void* data);
-DEV_ULTRASION *create_ultrasion(void);
+SensorBase *create_ultrasion(void);
+void destroy_ultrasion(SensorBase *sensor);
 #endif
