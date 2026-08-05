@@ -1,6 +1,6 @@
 #include "color.h"
 #include "motor.h"
-#include "matrix_port_stub.h"
+#include "matrix_port.h"
 #include "_color.h"
 #include "PikaVM.h"
 
