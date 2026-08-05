@@ -259,6 +259,37 @@ static uint8_t app_bt_exchange_at(UART_HandleTypeDef *huart, DEV_BLUE *blue,
     return 0U;
 }
 
+/*
+ * At_Exchange — 统一 AT 通道（Task 17）。
+ * 融合 blue_at_cmd（blue.c）的 3 次重试语义与 app_bt_exchange_at 的行解析/缓存更新，
+ * 语义等价：blue_at_cmd 原判断「模块返回 OK」（blue_resp_has_ok），
+ * 此处 app_bt_exchange_at 同样解析响应行，OK→*out_ok=1、ERROR→*out_ok=0。
+ */
+uint8_t At_Exchange(const char *line, uint8_t *out_ok)
+{
+    uint8_t retry;
+    DEV_BLUE *blue = (DEV_BLUE *)getHubBase(PORT_BLUE);   /* device_pool 访问 */
+    uint8_t tx[128];
+    uint16_t len;
+
+    if (out_ok == NULL) { return 0U; }
+    *out_ok = 0U;
+    if ((line == NULL) || (blue == NULL) || (blue->huart == NULL)) { return 0U; }
+
+    len = (uint16_t)snprintf((char *)tx, sizeof(tx), "%s\r\n", line);
+    if (len >= sizeof(tx)) { return 0U; }
+
+    for (retry = 0U; retry < 3U; retry++)
+    {
+        if (app_bt_exchange_at(blue->huart, blue, tx, len, out_ok) != 0U)
+        {
+            return 1U;
+        }
+        delay_ms(DRV_BT_AT_GAP_MS);
+    }
+    return 0U;
+}
+
 static void at_send_line(const char *line)
 {
     UART_HandleTypeDef *huart = getusartHandle(5);

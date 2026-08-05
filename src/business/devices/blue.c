@@ -1,9 +1,9 @@
 #include "blue.h"
+#include "at.h"
 #include "drv_flash_storage.h"
 #include "drv_bt_config.h"
 #include "drv_comm.h"
 #include "event_manager.h"
-#include "stm32f1xx_hal.h"
 #include <stdio.h>
 #include "string.h"
 #include "malloc.h"
@@ -11,90 +11,29 @@
 #include "usart.h"
 #include "delay.h"
 
-static uint8_t blue_uart_send(UART_HandleTypeDef *huart, const uint8_t *data, uint16_t len)
-{
-    uint32_t t0;
-
-    if ((huart == NULL) || (data == NULL) || (len == 0U))
-    {
-        return 0U;
-    }
-
-    t0 = HAL_GetTick();
-    while (HAL_UART_GetState(huart) != HAL_UART_STATE_READY)
-    {
-        if ((HAL_GetTick() - t0) >= 200U)
-        {
-            return 0U;
-        }
-        delay_ms(1U);
-    }
-    return (HAL_UART_Transmit(huart, (uint8_t *)data, len, 500U) == HAL_OK) ? 1U : 0U;
-}
-
-static uint8_t blue_resp_has_ok(const char *resp)
-{
-    if (resp == NULL)
-    {
-        return 0U;
-    }
-    if ((strncmp(resp, "OK\r\n", 4) == 0) || (strcmp(resp, "OK") == 0))
-    {
-        return 1U;
-    }
-    return (strstr(resp, "\r\nOK\r\n") != NULL) ? 1U : 0U;
-}
-
-static uint8_t blue_at_cmd(char *atcmd)
-{
-    uint8_t retry;
-    DEV_BLUE *blue = (DEV_BLUE *)getHubBase(PORT_BLUE);
-
-    if ((blue == NULL) || (blue->huart == NULL))
-    {
-        return 0U;
-    }
-
-    for (retry = 0U; retry < 3U; retry++)
-    {
-        blue->is_resh_flag = false;
-        DrvBtRing_Flush();
-        if (blue_uart_send(blue->huart, (const uint8_t *)atcmd, (uint16_t)strlen(atcmd)) == 0U)
-        {
-            delay_ms(DRV_BT_AT_GAP_MS);
-            continue;
-        }
-        delay_ms(DRV_BT_AT_TIMEOUT_MS);
-        if ((blue->is_resh_flag != 0U) &&
-            (blue_resp_has_ok((const char *)blue->at_cmd_bufer) != 0U))
-        {
-            return 1U;
-        }
-        delay_ms(DRV_BT_AT_GAP_MS);
-    }
-    return 0U;
-}
+/* AT 细节（重试/OK 判定/缓存更新）全部在 protocol/at.c，本文件不再维护第二套实现（Task 17）*/
 
 static uint8_t blue_run_first_time_config(void)
 {
     char cmd[48];
     uint8_t retry;
+    uint8_t ok;
 
     /* 不做 AT+FACTORY/AT+RST，避免覆盖用户已设置的蓝牙参数 */
-    if (blue_at_cmd("AT\r\n") == 0U)
+    if ((At_Exchange("AT", &ok) == 0U) || (ok == 0U))
     {
         return 0U;
     }
     delay_ms(DRV_BT_AT_GAP_MS);
 
-    (void)snprintf(cmd, sizeof(cmd), "AT+NAME=%s\r\n", DRV_BT_NAME);
-    if (blue_at_cmd(cmd) == 0U)
+    (void)snprintf(cmd, sizeof(cmd), "AT+NAME=%s", DRV_BT_NAME);
+    if ((At_Exchange(cmd, &ok) == 0U) || (ok == 0U))
     {
         return 0U;
     }
     delay_ms(DRV_BT_AT_GAP_MS);
 
-    if (blue_at_cmd("AT+ROLE=2\r\n") == 0U)
+    if ((At_Exchange("AT+ROLE=2", &ok) == 0U) || (ok == 0U))
     {
         return 0U;
     }
@@ -116,12 +55,14 @@ static uint8_t blue_run_first_time_config(void)
 
 void blue_set_on(void)
 {
-    (void)blue_at_cmd("AT+ROLE=2\r\n");
+    uint8_t ok;
+    (void)At_Exchange("AT+ROLE=2", &ok);
 }
 
 void blue_set_off(void)
 {
-    (void)blue_at_cmd("AT+ROLE=1\r\n");
+    uint8_t ok;
+    (void)At_Exchange("AT+ROLE=1", &ok);
 }
 
 void blue_send_data(char *str, uint16_t len)
