@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE,PIKA_CONFIG_ENABLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Users;..\..\Drivers;..\..\src\driver\bsp;..\..\src\driver\sys;..\..\src\driver\chip;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\CMSIS\Include;..\..\Middlewares\usb\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Middlewares\usb\STM32_USB_Device_Library\Core\Inc;..\..\Middlewares\usb\USB_HAL;..\..\python\pikascript-core;..\..\python\pikascript-api;..\..\python\pikascript-lib\PikaStdLib;..\..\application\beep;..\..\application\motor;..\..\application\blue;..\..\application\color;..\..\application\touch;..\..\application\ultrasion;..\..\Middlewares\ymodem;..\..\Middlewares\stubs;..\..\src\middleware;..\..\src\protocol;..\..\src\business\devices;..\..\src\business\devices\matrix;..\..\src\business\pika;..\..\src\business\pika\ExternLib;..\..\src\business\app</IncludePath>
+              <IncludePath>..\..\Users;..\..\Drivers;..\..\src\driver\bsp;..\..\src\driver\sys;..\..\src\driver\chip;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\CMSIS\Include;..\..\Middlewares\usb\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Middlewares\usb\STM32_USB_Device_Library\Core\Inc;..\..\Middlewares\usb\USB_HAL;..\..\python\pikascript-core;..\..\python\pikascript-api;..\..\python\pikascript-lib\PikaStdLib;..\..\Middlewares\ymodem;..\..\Middlewares\stubs;..\..\src\middleware;..\..\src\protocol;..\..\src\business\devices;..\..\src\business\devices\matrix;..\..\src\business\pika;..\..\src\business\pika\ExternLib;..\..\src\business\app</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1050,9 +1050,9 @@
           <GroupName>Readme</GroupName>
           <Files>
             <File>
-              <FileName>readme.txt</FileName>
+              <FileName>README.md</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\readme.txt</FilePath>
+              <FilePath>..\..\README.md</FilePath>
             </File>
           </Files>
         </Group>
