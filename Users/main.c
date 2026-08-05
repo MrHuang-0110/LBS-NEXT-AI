@@ -84,9 +84,13 @@ void app_shutdown_sequence(void)
 
 /* ---- 按键动作回调（注册给 key.c 状态机；在 TIM6 事件回调 / ISR 上下文执行，
  *       必须非阻塞：不写 Flash、不阻塞延时） ---- */
+static uint8_t s_hold_lit_prev;
+static uint8_t s_hold_active;   /* 按住中：按下开始时暂停流水灯，短按恢复时复位 */
+
 static void app_key_short_press(void)
 {
     AppPika_OnKeyToggle();
+    s_hold_active = 0U;
     DrvLed_SetFlowEnable(1U);
 }
 
@@ -95,13 +99,17 @@ static void app_key_long_press(void)
     g_shutdown_pending = 1U;   /* 由 hook/主循环执行关机序列（禁止在 ISR 内写 Flash/阻塞动画） */
 }
 
-static uint8_t s_hold_lit_prev;
 static void app_key_hold_progress(uint8_t lit)
 {
     DrvLed_ShowHoldProgress(lit);
     if (lit == 0U)
     {
         s_hold_lit_prev = 0U;   /* 新一次按下：复位档位记录，保证每档蜂鸣节奏与原版一致 */
+        if (s_hold_active == 0U)
+        {
+            s_hold_active = 1U;
+            DrvLed_SetFlowEnable(0U);   /* 按住开始：暂停流水灯，与原版按下瞬间行为一致 */
+        }
         return;
     }
     if (lit > s_hold_lit_prev)
