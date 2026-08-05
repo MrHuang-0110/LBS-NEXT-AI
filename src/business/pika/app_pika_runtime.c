@@ -28,7 +28,7 @@ static const uint8_t *s_bytecode;
 static uint32_t s_bytecode_len;
 
 /* monitor 状态提供者：协议层经 Monitor_RegisterStateProvider 获取 Pika 运行状态，
- * �?protocol 层不依赖本模块的 AppPika_GetState */
+ * 使 protocol 层不依赖本模块的 AppPika_GetState */
 static const char *app_monitor_state_provider(void)
 {
     return (AppPika_GetState() == APP_PIKA_STATE_RUNNING) ? "run" : "stop";
@@ -47,12 +47,13 @@ static int pika_magic_is_pyo(const uint8_t *data, uint32_t len)
 
 void pika_hook_instruct(void)
 {
-    /* 非实时兜底：监控/命令轮询已移�?TIM6 事件回调（monitor_event/cmd_poll），
-     * VM 阻塞期间仍保持实时；�?hook 仅在脚本执行间隙做轻量停止检查与
-     * 挂起消费（关机序列含 Flash 写入+阻塞动画、cloase_all_motor �?60ms 忙等�?     * 均禁止在 ISR 内执行，�?VM 执行间隙兜底消费�?*/
+    /* 非实时兜底：监控/命令轮询已移入 TIM6 事件回调（monitor_event/cmd_poll），
+     * VM 阻塞期间仍保持实时；本 hook 仅在脚本执行间隙做轻量停止检查与
+     * 挂起消费（关机序列含 Flash 写入+阻塞动画、cloase_all_motor 含 60ms 忙等，
+     * 均禁止在 ISR 内执行，由 VM 执行间隙兜底消费） */
     AppPika_CheckAbort();
 
-    /* 长按关机挂起序列（禁止在 ISR 执行，由 VM 执行间隙消费�?*/
+    /* 长按关机挂起序列（禁止在 ISR 执行，由 VM 执行间隙消费） */
     extern volatile uint8_t g_shutdown_pending;
     if (g_shutdown_pending != 0U)
     {
@@ -61,7 +62,7 @@ void pika_hook_instruct(void)
         app_shutdown_sequence();   /* 不再返回 */
     }
 
-    /* 短按停止挂起的电机复位（cloase_all_motor �?60ms 忙等，禁止在 ISR 内执行） */
+    /* 短按停止挂起的电机复位（cloase_all_motor 含 60ms 忙等，禁止在 ISR 内执行） */
     extern volatile uint8_t g_motor_stop_pending;
     if (g_motor_stop_pending != 0U)
     {
