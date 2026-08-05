@@ -1,6 +1,7 @@
 #include "json-maker.h"
 #include "monitor.h"
 #include "app_cmd.h"
+#include "at.h"
 #include "app_pika_runtime.h"
 #include "malloc.h"
 #include <string.h>
@@ -100,11 +101,11 @@ static uint8_t monitor_build_json(void)
 
     /* 蓝牙模块属性：始终输出，空时输出空字符串便于上位机识别 */
     {
-        const char *bt_name = AppBt_GetName();
+        const char *bt_name = At_GetName();
         p = json_str(p, "btName", (bt_name != NULL) ? bt_name : "", &remLen);
     }
     {
-        const char *bt_adv = AppBt_GetAdvData();
+        const char *bt_adv = At_GetAdvData();
         p = json_str(p, "btAdvData", (bt_adv != NULL) ? bt_adv : "", &remLen);
     }
 

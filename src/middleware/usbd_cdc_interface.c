@@ -29,6 +29,7 @@
 #include "event_manager.h"
 #include "drv_comm.h"
 #include "app_cmd.h"
+#include "cmd.h"
 #include "usart.h"
 #include "delay.h"
  
@@ -199,7 +200,7 @@ void cdc_vcp_data_rx (uint8_t *buf, uint32_t Len)
         return;
     }
     DrvUsbRing_Push(buf, Len);
-    if (AppCmd_IsYmodemActive() == 0U)
+    if (Cmd_IsYmodemActive() == 0U)
     {
         if (usb_message.g_user_usb_rx_len + Len > USB_USART_REC_LEN)
         {
@@ -296,7 +297,6 @@ void usb_cdc_init(void)
 void usb_event_receive_callback(void *arg) {
 	  USB_MESSAGE_BOX *message = (USB_MESSAGE_BOX*)arg;
 	  if(message == NULL)return;
-	  extern void busDataparsing(_AGREEMENT *frame,void (*port_transerf_data)(void *data,uint16_t length));
 	  uint8_t *data = message->g_user_usb_rx_buffer;
 	  message->g_sys_usb_rx_len = message->g_user_usb_rx_len;
 	  while (message->g_user_usb_rx_len--){
@@ -304,7 +304,7 @@ void usb_event_receive_callback(void *arg) {
 				_AGREEMENT frame;
 			 if(dataAgreeAnalys(&frame,message->g_user_usb_rx_buffer,message->g_sys_usb_rx_len) == AGREE_MEN_OK)
 			 {
-					busDataparsing(&frame,cdc_vcp_data_tx);
+					Cmd_ProcessFrame(&frame);
 			 }
      }
 	 }

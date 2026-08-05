@@ -1,5 +1,5 @@
-#ifndef __PROTOCOL_H
-#define __PROTOCOL_H
+#ifndef __FRAME_H
+#define __FRAME_H
 #include "sys.h"
 #include "stdbool.h"
 #include "stdlib.h"

@@ -19,7 +19,7 @@
 #include "usbd_desc.h"
 #include "usbd_cdc.h"
 #include "usbd_cdc_interface.h"
-#include "protocol.h"
+#include "frame.h"
 #include "lbsfilemanager.h"
 #include "event_manager.h"
 #include "json-maker.h"

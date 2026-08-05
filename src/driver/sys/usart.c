@@ -2,7 +2,7 @@
 #include "sys.h"
 #include "usart.h"
 #include "delay.h"
-#include "protocol.h"
+#include "frame.h"
 #include "device_pool.h"
 #include "drv_comm.h"
 #include "stdarg.h"

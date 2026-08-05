@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE,PIKA_CONFIG_ENABLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Users;..\..\Drivers;..\..\src\driver\bsp;..\..\src\driver\sys;..\..\src\driver\chip;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\CMSIS\Include;..\..\Middlewares\usb\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Middlewares\usb\STM32_USB_Device_Library\Core\Inc;..\..\Middlewares\usb\USB_HAL;..\..\Middlewares\protocol;..\..\python\pikascript-core;..\..\python\pikascript-api;..\..\python\pikascript-lib\PikaStdLib;..\..\application\beep;..\..\application\motor;..\..\application\blue;..\..\application\color;..\..\application\touch;..\..\application\ultrasion;..\..\Middlewares\monitor;..\..\Middlewares\ymodem;..\..\Middlewares\stubs;..\..\src\middleware</IncludePath>
+              <IncludePath>..\..\Users;..\..\Drivers;..\..\src\driver\bsp;..\..\src\driver\sys;..\..\src\driver\chip;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\CMSIS\Include;..\..\Middlewares\usb\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Middlewares\usb\STM32_USB_Device_Library\Core\Inc;..\..\Middlewares\usb\USB_HAL;..\..\python\pikascript-core;..\..\python\pikascript-api;..\..\python\pikascript-lib\PikaStdLib;..\..\application\beep;..\..\application\motor;..\..\application\blue;..\..\application\color;..\..\application\touch;..\..\application\ultrasion;..\..\Middlewares\ymodem;..\..\Middlewares\stubs;..\..\src\middleware;..\..\src\protocol</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -680,9 +680,34 @@
               <FilePath>..\..\src\middleware\malloc.c</FilePath>
             </File>
             <File>
-              <FileName>protocol.c</FileName>
+              <FileName>frame.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\protocol\protocol.c</FilePath>
+              <FilePath>..\..\src\protocol\frame.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\protocol\cmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>at.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\protocol\at.c</FilePath>
+            </File>
+            <File>
+              <FileName>monitor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\protocol\monitor.c</FilePath>
+            </File>
+            <File>
+              <FileName>json-maker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\protocol\json-maker.c</FilePath>
+            </File>
+            <File>
+              <FileName>ymodem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\protocol\ymodem.c</FilePath>
             </File>
             <File>
               <FileName>lbsfilemanager.c</FileName>
@@ -705,11 +730,6 @@
               <FilePath>..\..\src\middleware\drv_comm.c</FilePath>
             </File>
             <File>
-              <FileName>drv_ymodem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\ymodem\drv_ymodem.c</FilePath>
-            </File>
-            <File>
               <FileName>matrix_port_stub.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Middlewares\stubs\matrix_port_stub.c</FilePath>
@@ -718,16 +738,6 @@
               <FileName>_matrix_stub.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Middlewares\stubs\_matrix_stub.c</FilePath>
-            </File>
-            <File>
-              <FileName>json-maker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\monitor\json-maker.c</FilePath>
-            </File>
-            <File>
-              <FileName>monitor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Middlewares\monitor\monitor.c</FilePath>
             </File>
             <File>
               <FileName>bat_manager.c</FileName>

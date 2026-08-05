@@ -4,6 +4,7 @@
 #include "bat_manager.h"
 #include "drv_led.h"
 #include "app_cmd.h"
+#include "cmd.h"
 #include "app_pika_runtime.h"
 #include "app_pika_script_flash.h"
 #include "drv_comm.h"
@@ -38,7 +39,7 @@ static EVENT_MANAGER event_t[] = {
  {"key_middle_event", 1, key_middle_callback, NULL},
  {"monitor_event", 1, monitor_call_back, NULL},
  {"battery_check", 600, battery_check_callback, NULL},
- {"cmd_poll", 1, app_cmd_poll_callback, NULL}
+ {"cmd_poll", 1, Cmd_PollCallback, NULL}
 };
 
 static uint8_t check_swd_config(void)

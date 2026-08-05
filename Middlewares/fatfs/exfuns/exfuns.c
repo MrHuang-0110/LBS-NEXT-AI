@@ -6,7 +6,7 @@
 #include "fattester.h"
 #include "ff.h" 
 #include "w25q80.h" 
-#include "protocol.h"
+#include "frame.h"
 #include "lbsfilemanager.h"
 #include "key.h"
 #include "ui_manager.h"

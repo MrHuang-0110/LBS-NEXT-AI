@@ -1,5 +1,5 @@
-#ifndef DRV_YMODEM_H
-#define DRV_YMODEM_H
+#ifndef __YMODEM_H
+#define __YMODEM_H
 
 #include "drv_comm.h"
 

@@ -24,7 +24,7 @@
 
 #ifndef __USBD_CDC_IF_H
 #define __USBD_CDC_IF_H
-#include "protocol.h"
+#include "frame.h"
 #include "usbd_cdc.h"
 
 #define USB_CDC_DEVICE_ID 		  10
