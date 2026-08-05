@@ -54,6 +54,14 @@ void pika_hook_instruct(void)
         app_shutdown_sequence();   /* 不再返回 */
     }
 
+    /* Task3: 消费挂起电机停止标志（cloase_all_motor 含 60ms 忙等，禁止在 ISR 内执行） */
+    extern volatile uint8_t g_motor_stop_pending;
+    if (g_motor_stop_pending != 0U)
+    {
+        g_motor_stop_pending = 0U;
+        cloase_all_motor();
+    }
+
     AppPika_CheckAbort();
 
     /* 每 2 次钩子触发（约 100 条指令）轮询一次，确保脚本阻塞时不丢监控 */

@@ -23,6 +23,10 @@ volatile float bat = 0.0f;
  * （禁止在 ISR 内执行 Flash 写入与阻塞动画） */
 volatile uint8_t g_shutdown_pending = 0U;
 
+/* 挂起电机停止标志：短按停止脚本时 cloase_all_motor() 含 60ms 忙等（delay_ms(30)x2），
+ * 禁止在 ISR 内执行，由 hook/主循环消费 */
+volatile uint8_t g_motor_stop_pending = 0U;
+
 static EVENT_MANAGER event_t[] = {
  {"led_flow_event", 1, led_flow_event_callback, NULL},
  {"iwdg_feedevent", 10, iwdg_feed, NULL},
@@ -89,7 +93,24 @@ static uint8_t s_hold_active;   /* 按住中：按下开始时暂停流水灯，
 
 static void app_key_short_press(void)
 {
-    AppPika_OnKeyToggle();
+    /* ISR 安全：不调用 AppPika_OnKeyToggle（其 RUNNING 分支内含 cloase_all_motor 的
+     * 60ms 忙等）。RUNNING→Stop 仅置标志，电机停止挂起由 hook/主循环消费 */
+    if (AppPika_GetState() == APP_PIKA_STATE_RUNNING)
+    {
+        (void)AppPika_Stop();       /* ISR 安全：仅置停止标志 + pks_vm_exit */
+        g_motor_stop_pending = 1U;  /* cloase_all_motor 含 60ms 忙等，移到主循环/hook 消费 */
+    }
+    else if (AppPika_HasBytecode() != 0U)
+    {
+        start_py = true;            /* 与 0xB6 命令在 ISR 写 start_py 同模式，安全 */
+    }
+    s_hold_active = 0U;
+    DrvLed_SetFlowEnable(1U);
+}
+
+static void app_key_release(void)
+{
+    /* 非短按释放（held >= 800ms 且未触发短按）：恢复流水灯，与原版释放分支一致 */
     s_hold_active = 0U;
     DrvLed_SetFlowEnable(1U);
 }
@@ -169,6 +190,7 @@ static void systemInit(void)
     Key_RegisterShortPressCb(app_key_short_press);
     Key_RegisterLongPressCb(app_key_long_press);
     Key_RegisterHoldProgressCb(app_key_hold_progress);
+    Key_RegisterReleaseCb(app_key_release);
     Key_EnableAfterBoot();
 }
 
@@ -183,6 +205,12 @@ int main(void)
         {
             g_shutdown_pending = 0U;
             app_shutdown_sequence();
+        }
+        /* 消费挂起电机停止标志（cloase_all_motor 含 60ms 忙等，仅在主循环执行） */
+        if (g_motor_stop_pending != 0U)
+        {
+            g_motor_stop_pending = 0U;
+            cloase_all_motor();
         }
         if (start_py)
         {

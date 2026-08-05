@@ -7,14 +7,16 @@ volatile bool start_py = false;
 volatile bool start_pauto = false;
 static REMOTE_CFG remote_cfg;
 
-/* Task3: 长短按/按住进度回调（由应用层注册，driver 层不依赖业务头文件） */
+/* Task3: 长短按/按住进度/释放回调（由应用层注册，driver 层不依赖业务头文件） */
 static void (*s_short_press_cb)(void) = NULL;
 static void (*s_long_press_cb)(void) = NULL;
 static void (*s_hold_progress_cb)(uint8_t lit) = NULL;
+static void (*s_release_cb)(void) = NULL;
 
 void Key_RegisterShortPressCb(void (*cb)(void)) { s_short_press_cb = cb; }
 void Key_RegisterLongPressCb(void (*cb)(void))  { s_long_press_cb = cb; }
 void Key_RegisterHoldProgressCb(void (*cb)(uint8_t lit)) { s_hold_progress_cb = cb; }
+void Key_RegisterReleaseCb(void (*cb)(void))    { s_release_cb = cb; }
 
 static Key_Scan_Handle_t key_handle = {
     .port = KEY1_GPIO_PORT,
@@ -59,7 +61,7 @@ void Key_Scan_Handler(uint32_t scan_interval_ms)
     (void)scan_interval_ms;
     uint32_t now = HAL_GetTick();
 
-    if (now < s_key_ready_tick) { return; }   /* 开机忽略窗口（s_key_ready_tick 由 Key_EnableAfterBoot 设置） */
+    if ((now - s_key_ready_tick) < KEY_BOOT_IGNORE_MS) { return; }   /* 开机忽略窗口（起始 tick 由 Key_EnableAfterBoot 记录，减法防回绕） */
     key_handle.current_raw_state = key_read_raw_pressed();
 
     if (key_handle.current_raw_state == 1U)   /* 按下 */
@@ -89,13 +91,17 @@ void Key_Scan_Handler(uint32_t scan_interval_ms)
         {
             if (s_short_press_cb != NULL) { s_short_press_cb(); }
         }
+        else if (held >= KEY_CLICK_MAX_MS)  /* 非短按释放（长按中止/超窗释放） */
+        {
+            if (s_release_cb != NULL) { s_release_cb(); }
+        }
     }
     key_handle.last_raw_state = key_handle.current_raw_state;
 }
 
 void Key_EnableAfterBoot(void)
 {
-    s_key_ready_tick = HAL_GetTick() + KEY_BOOT_IGNORE_MS;
+    s_key_ready_tick = HAL_GetTick();
 }
 
 uint8_t Key_Check_Short_Press(void)
