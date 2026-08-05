@@ -95,6 +95,10 @@ uint8_t Key_Check_Long_Hold(void);
 uint8_t Key_Check_Long_Press(void);
 uint8_t Key_Check_Short_Press(void);
 void Key_Scan_Handler(uint32_t scan_interval_ms);
+void Key_RegisterShortPressCb(void (*cb)(void));
+void Key_RegisterLongPressCb(void (*cb)(void));
+void Key_RegisterHoldProgressCb(void (*cb)(uint8_t lit));
+void Key_EnableAfterBoot(void);
 void key_middle_callback(void *arg);
 void set_entery_short(uint8_t key);
 

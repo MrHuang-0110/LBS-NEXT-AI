@@ -44,6 +44,16 @@ static uint8_t s_hook_cnt;
 
 void pika_hook_instruct(void)
 {
+    /* Task3: 消费挂起关机标志。按键回调（ISR）置位后，脚本运行期间在此执行关机序列
+     * （含 Flash 写入+阻塞动画，禁止在 ISR 内执行） */
+    extern volatile uint8_t g_shutdown_pending;
+    if (g_shutdown_pending != 0U)
+    {
+        g_shutdown_pending = 0U;
+        extern void app_shutdown_sequence(void);
+        app_shutdown_sequence();   /* 不再返回 */
+    }
+
     AppPika_CheckAbort();
 
     /* 每 2 次钩子触发（约 100 条指令）轮询一次，确保脚本阻塞时不丢监控 */

@@ -19,14 +19,9 @@ volatile bool is_iwdg = false;
 volatile uint32_t spark_version = 100U;
 volatile float bat = 0.0f;
 
-#define KEY_HOLD_SHUTDOWN_MS    1500U
-#define KEY_BOOT_IGNORE_MS      800U
-#define KEY_CLICK_TOGGLE_MAX_MS 800U
-#define KEY_CLICK_FREQ_HZ       880U
-#define KEY_CLICK_BEEP_MS       40U
-
-static uint32_t s_key_ready_tick;
-static uint8_t s_key_ready_inited;
+/* 挂起关机标志：由按键回调（ISR 上下文）置位，由 hook/主循环消费执行关机序列
+ * （禁止在 ISR 内执行 Flash 写入与阻塞动画） */
+volatile uint8_t g_shutdown_pending = 0U;
 
 static EVENT_MANAGER event_t[] = {
  {"led_flow_event", 1, led_flow_event_callback, NULL},
@@ -72,7 +67,7 @@ static void disable_jtag_enable_swd(void)
     (void)check_swd_config();
 }
 
-static void app_shutdown_sequence(void)
+void app_shutdown_sequence(void)
 {
     beep_stop();
     (void)AppPikaScriptFlash_SaveFromRam();   /* 关机前保存当前脚本到 Flash */
@@ -87,79 +82,34 @@ static void app_shutdown_sequence(void)
     }
 }
 
-static void Main_Loop_Process(void)
+/* ---- 按键动作回调（注册给 key.c 状态机；在 TIM6 事件回调 / ISR 上下文执行，
+ *       必须非阻塞：不写 Flash、不阻塞延时） ---- */
+static void app_key_short_press(void)
 {
-    static uint32_t press_start_tick = 0U;
-    static uint8_t flow_paused = 0U;
-    static uint8_t shutdown_done = 0U;
-    static uint8_t hold_lit_prev = 0U;
+    AppPika_OnKeyToggle();
+    DrvLed_SetFlowEnable(1U);
+}
 
-    if (shutdown_done != 0U)
+static void app_key_long_press(void)
+{
+    g_shutdown_pending = 1U;   /* 由 hook/主循环执行关机序列（禁止在 ISR 内写 Flash/阻塞动画） */
+}
+
+static uint8_t s_hold_lit_prev;
+static void app_key_hold_progress(uint8_t lit)
+{
+    DrvLed_ShowHoldProgress(lit);
+    if (lit == 0U)
     {
+        s_hold_lit_prev = 0U;   /* 新一次按下：复位档位记录，保证每档蜂鸣节奏与原版一致 */
         return;
     }
-
-    if (s_key_ready_inited == 0U)
+    if (lit > s_hold_lit_prev)
     {
-        return;
-    }
-    if ((HAL_GetTick() - s_key_ready_tick) < KEY_BOOT_IGNORE_MS)
-    {
-        return;
-    }
-
-    Key_Scan_Handler(5);
-
-    if (Key_Is_Pressed())
-    {
-        if (press_start_tick == 0U)
-        {
-            press_start_tick = HAL_GetTick();
-            hold_lit_prev = 0U;
-            if (flow_paused == 0U)
-            {
-                DrvLed_SetFlowEnable(0U);
-                flow_paused = 1U;
-            }
-        }
-        else
-        {
-            uint32_t held_ms = HAL_GetTick() - press_start_tick;
-            uint8_t group = (uint8_t)((held_ms * 3U) / KEY_HOLD_SHUTDOWN_MS);
-            if (group > 3U)
-            {
-                group = 3U;
-            }
-            uint8_t lit = group * 3U;
-            DrvLed_ShowHoldProgress(lit);
-            if (lit > hold_lit_prev)
-            {
-                beep_play_melody("880", KEY_CLICK_BEEP_MS);
-                hold_lit_prev = lit;
-            }
-            if (held_ms >= KEY_HOLD_SHUTDOWN_MS)
-            {
-                shutdown_done = 1U;
-                app_shutdown_sequence();
-            }
-        }
-    }
-    else if (press_start_tick != 0U)
-    {
-        uint32_t press_duration_ms = HAL_GetTick() - press_start_tick;
-        if ((press_duration_ms > 30U) && (press_duration_ms < KEY_CLICK_TOGGLE_MAX_MS))
-        {
-            /* 短按：启动/停止脚本，LED 流水由 Python 的 set_point_matrix 控制 */
-            flow_paused = 0U;
-            AppPika_OnKeyToggle();
-        }
-        else if (flow_paused != 0U)
-        {
-            DrvLed_SetFlowEnable(1U);
-            flow_paused = 0U;
-        }
-        press_start_tick = 0U;
-        hold_lit_prev = 0U;
+        /* 非阻塞蜂鸣（ISR 安全）。原阻塞式 beep_play_melody 内含 HAL_Delay，
+         * 在 TIM6 ISR 中调用会阻塞/死锁，故改用非阻塞 beep_play */
+        beep_play(BEEP_KEY_PRESS);
+        s_hold_lit_prev = lit;
     }
 }
 
@@ -206,8 +156,12 @@ static void systemInit(void)
     blue_init();
     (void)AppPikaScriptFlash_LoadToRam();   /* 若 Flash 有有效脚本, 装载到 RAM (不运行) */
     AppCmd_SyncBtFromModule();
-    s_key_ready_tick = HAL_GetTick();
-    s_key_ready_inited = 1U;
+
+    /* Task3: 注册按键回调（状态机驱动于 TIM6 事件回调）并设置开机忽略窗口 */
+    Key_RegisterShortPressCb(app_key_short_press);
+    Key_RegisterLongPressCb(app_key_long_press);
+    Key_RegisterHoldProgressCb(app_key_hold_progress);
+    Key_EnableAfterBoot();
 }
 
 int main(void)
@@ -216,7 +170,12 @@ int main(void)
     systemInit();
     while (1)
     {
-        Main_Loop_Process();
+        /* 消费挂起关机标志（按键回调在 ISR 置位；关机序列含 Flash 写入+阻塞动画，仅在主循环执行） */
+        if (g_shutdown_pending != 0U)
+        {
+            g_shutdown_pending = 0U;
+            app_shutdown_sequence();
+        }
         if (start_py)
         {
             (void)AppPika_Start();

@@ -1,15 +1,20 @@
 
 #include "./BSP/KEY/key.h"
 #include "./SYSTEM/delay/delay.h"
-#include "pikaVM.h"
 #include "event_manager.h"
-#include "beep.h"
-#include "app_pika_runtime.h"
-#include "lbsfilemanager.h"
 
 volatile bool start_py = false;
 volatile bool start_pauto = false;
 static REMOTE_CFG remote_cfg;
+
+/* Task3: 长短按/按住进度回调（由应用层注册，driver 层不依赖业务头文件） */
+static void (*s_short_press_cb)(void) = NULL;
+static void (*s_long_press_cb)(void) = NULL;
+static void (*s_hold_progress_cb)(uint8_t lit) = NULL;
+
+void Key_RegisterShortPressCb(void (*cb)(void)) { s_short_press_cb = cb; }
+void Key_RegisterLongPressCb(void (*cb)(void))  { s_long_press_cb = cb; }
+void Key_RegisterHoldProgressCb(void (*cb)(uint8_t lit)) { s_hold_progress_cb = cb; }
 
 static Key_Scan_Handle_t key_handle = {
     .port = KEY1_GPIO_PORT,
@@ -39,19 +44,58 @@ static uint8_t key_read_raw_pressed(void)
     return (HAL_GPIO_ReadPin(key_handle.port, key_handle.pin) == key_handle.active_level) ? 1U : 0U;
 }
 
+#define KEY_CLICK_MIN_MS        30U
+#define KEY_CLICK_MAX_MS        800U
+#define KEY_HOLD_SHUTDOWN_MS    1500U
+#define KEY_BOOT_IGNORE_MS      800U
+
+static uint32_t s_key_ready_tick;
+
+/* 按键判定状态机：由 key_middle_event 在 TIM6 事件回调（ISR 上下文）中驱动，
+ * 脚本运行期间主循环阻塞时按键仍可用。注意：回调只做状态判定与事件上抛，
+ * 禁止在回调内执行阻塞/耗时操作（关机序列通过 g_shutdown_pending 挂起消费）。 */
 void Key_Scan_Handler(uint32_t scan_interval_ms)
 {
     (void)scan_interval_ms;
+    uint32_t now = HAL_GetTick();
+
+    if (now < s_key_ready_tick) { return; }   /* 开机忽略窗口（s_key_ready_tick 由 Key_EnableAfterBoot 设置） */
     key_handle.current_raw_state = key_read_raw_pressed();
 
-    uint8_t rising_edge = (key_handle.current_raw_state == 0 && key_handle.last_raw_state == 1);
-    key_handle.last_raw_state = key_handle.current_raw_state;
-
-    if (rising_edge && start_py)
+    if (key_handle.current_raw_state == 1U)   /* 按下 */
     {
-        __exitpython();
-        start_pauto = false;
+        if (key_handle.press_start_time == 0U)
+        {
+            key_handle.press_start_time = now;
+        }
+        if (s_hold_progress_cb != NULL)
+        {
+            uint32_t held = now - key_handle.press_start_time;
+            uint8_t group = (uint8_t)((held * 3U) / KEY_HOLD_SHUTDOWN_MS);
+            if (group > 3U) { group = 3U; }
+            s_hold_progress_cb((uint8_t)(group * 3U));
+        }
+        if ((now - key_handle.press_start_time) >= KEY_HOLD_SHUTDOWN_MS)
+        {
+            if (s_long_press_cb != NULL) { s_long_press_cb(); }
+            key_handle.press_start_time = 0U;   /* 防止重复触发 */
+        }
     }
+    else if (key_handle.press_start_time != 0U) /* 释放 */
+    {
+        uint32_t held = now - key_handle.press_start_time;
+        key_handle.press_start_time = 0U;
+        if ((held > KEY_CLICK_MIN_MS) && (held < KEY_CLICK_MAX_MS))
+        {
+            if (s_short_press_cb != NULL) { s_short_press_cb(); }
+        }
+    }
+    key_handle.last_raw_state = key_handle.current_raw_state;
+}
+
+void Key_EnableAfterBoot(void)
+{
+    s_key_ready_tick = HAL_GetTick() + KEY_BOOT_IGNORE_MS;
 }
 
 uint8_t Key_Check_Short_Press(void)
