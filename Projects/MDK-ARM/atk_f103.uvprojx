@@ -460,6 +460,11 @@
               <FilePath>..\..\src\driver\bsp\stmflash.c</FilePath>
             </File>
             <File>
+              <FileName>adc_sample.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\driver\bsp\adc_sample.c</FilePath>
+            </File>
+            <File>
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\driver\bsp\adc.c</FilePath>
