@@ -1,14 +1,10 @@
 #include "json-maker.h"
 #include "monitor.h"
-#include "app_cmd.h"
 #include "at.h"
-#include "app_pika_runtime.h"
+#include "device_pool.h"
 #include "malloc.h"
 #include <string.h>
 #include <stdio.h>
-#include "touch.h"
-#include "ultrasion.h"
-#include "color.h"
 #include "bat_manager.h"
 #include "drv_ir_reflect.h"
 #include "drv_comm.h"
@@ -26,6 +22,8 @@ static char json_buffer[2 * 1024];
 static volatile uint8_t s_monitor_pending;
 static uint32_t s_usb_monitor_last_ms;
 static uint32_t s_bt_monitor_last_ms;
+static volatile uint8_t s_upload_paused;
+static MonitorStateProvider s_state_provider;
 
 extern volatile uint32_t spark_version;
 extern void usb_printf(char *fmt, ...);
@@ -37,14 +35,27 @@ static uint8_t monitor_bt_is_connected(void)
 }
 #endif
 
+void Monitor_SetUploadPaused(uint8_t paused)
+{
+    s_upload_paused = (paused != 0U) ? 1U : 0U;
+}
+
+uint8_t Monitor_IsUploadPaused(void)
+{
+    return s_upload_paused;
+}
+
+void Monitor_RegisterStateProvider(MonitorStateProvider cb)
+{
+    s_state_provider = cb;
+}
+
 static uint8_t monitor_build_json(void)
 {
     size_t remLen = 2 * 1024;
     char *p = json_buffer;
     char temp_str[64];
-    DEV_COLOR *color;
-    DEV_TOUCH *touch;
-    DEV_ULTRASION *ultrasion;
+    DeviceReading_t reading;
 
     memset(p, 0, remLen);
     HubBase_Scan_TimeOut();
@@ -60,22 +71,34 @@ static uint8_t monitor_build_json(void)
             switch (hub_port[i].LinkeDeviceID)
             {
                 case DEVICE_ULTRASION_ID:
-                    ultrasion = read_ultrasion((SensorBase *)hub_port[i].sensors);
+                    memset(&reading, 0, sizeof(reading));
+                    if (hub_port[i].sensors->read_values != NULL)
+                    {
+                        hub_port[i].sensors->read_values(hub_port[i].sensors, &reading);
+                    }
                     p = json_objOpen(p, "ultrasion", &remLen);
-                    snprintf(temp_str, sizeof(temp_str), "%d", ultrasion->cm);
+                    snprintf(temp_str, sizeof(temp_str), "%d", reading.cm);
                     p = json_str(p, "cm", temp_str, &remLen);
                     p = json_objClose(p, &remLen);
                     break;
                 case DEVICE_TOUCH_ID:
-                    touch = read_touch((SensorBase *)hub_port[i].sensors);
+                    memset(&reading, 0, sizeof(reading));
+                    if (hub_port[i].sensors->read_values != NULL)
+                    {
+                        hub_port[i].sensors->read_values(hub_port[i].sensors, &reading);
+                    }
                     p = json_objOpen(p, "touch", &remLen);
-                    p = json_int(p, "state", touch->touchState, &remLen);
+                    p = json_int(p, "state", reading.touch_state, &remLen);
                     p = json_objClose(p, &remLen);
                     break;
                 case DEVICE_COLOR_ID:
-                    color = read_color((SensorBase *)hub_port[i].sensors);
+                    memset(&reading, 0, sizeof(reading));
+                    if (hub_port[i].sensors->read_values != NULL)
+                    {
+                        hub_port[i].sensors->read_values(hub_port[i].sensors, &reading);
+                    }
                     p = json_objOpen(p, "color", &remLen);
-                    snprintf(temp_str, sizeof(temp_str), "%d", color->lux);
+                    snprintf(temp_str, sizeof(temp_str), "%d", reading.lux);
                     p = json_str(p, "lux", temp_str, &remLen);
                     p = json_objClose(p, &remLen);
                     break;
@@ -109,13 +132,16 @@ static uint8_t monitor_build_json(void)
         p = json_str(p, "btAdvData", (bt_adv != NULL) ? bt_adv : "", &remLen);
     }
 
-    if (AppPika_GetState() == APP_PIKA_STATE_RUNNING)
     {
-        p = json_str(p, "State", "run", &remLen);
-    }
-    else
-    {
-        p = json_str(p, "State", "stop", &remLen);
+        const char *state = (s_state_provider != NULL) ? s_state_provider() : "stop";
+        if (state != NULL && strcmp(state, "run") == 0)
+        {
+            p = json_str(p, "State", "run", &remLen);
+        }
+        else
+        {
+            p = json_str(p, "State", "stop", &remLen);
+        }
     }
 
     p = json_objClose(p, &remLen);
@@ -143,7 +169,7 @@ void monitor_call_back(void *arg)
     DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
     DWT->CYCCNT = 0U;
 
-    if (AppMonitor_IsUploadPaused() != 0U)
+    if (Monitor_IsUploadPaused() != 0U)
     {
         return;
     }

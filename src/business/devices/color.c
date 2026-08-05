@@ -69,6 +69,13 @@ DEV_COLOR *read_color(void *self)
 	 return mt;   
 }
 
+/* SensorBase.read_values 包装：填充统一读数（供 protocol 层经 device_pool 读取） */
+static void read_color_values(void *self, DeviceReading_t *out)
+{
+    DEV_COLOR *mt = (DEV_COLOR *)self;
+    out->lux = mt->lux;
+}
+
 void refsh_color(void* self, void* data)
 {
     DEV_COLOR *mt = (DEV_COLOR*)self;
@@ -106,6 +113,7 @@ SensorBase *create_color(void)
  	 DEV_COLOR *color = mymalloc(SRAMIN,sizeof(DEV_COLOR));
 	 memset(color,0,sizeof(DEV_COLOR));
 	 color->base.type = DEVICE_COLOR_ID;
+	 color->base.read_values = read_color_values;
 	 memset(color->base.name,0,sizeof(color->base.name));
 	 strcpy(color->base.name,"color"); 
 	 color->color_calibation.thresholdValue = DEFAULT_THRESHOLD_VALUE/2.0f;

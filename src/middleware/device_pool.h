@@ -17,9 +17,18 @@
 #define PORT_MOTOR_C 0x06
 #define PORT_MOTOR_D 0x07
 
+/* 统一传感器读数（联合读法：JSON 只取数值字段，避免业务 DEV_* 类型泄漏到 protocol） */
+typedef struct {
+    int cm;           /* 超声距离（cm） */
+    int touch_state;  /* 触摸状态 */
+    int lux;          /* 颜色光强 */
+} DeviceReading_t;
+typedef void (*DeviceReadFn)(void *self, DeviceReading_t *out);
+
 typedef struct {
    int  type;	 
    char name[16];
+   void (*read_values)(void *self, DeviceReading_t *out);   /* 新增：业务 create_* 时填充 */
    void (*setParam)(void* self, void *data);
 }SensorBase;
 

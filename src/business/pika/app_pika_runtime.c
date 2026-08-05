@@ -1,4 +1,5 @@
 #include "app_pika_runtime.h"
+#include "monitor.h"
 #include "PikaMain.h"
 #include "PikaObj.h"
 #include "PikaVM.h"
@@ -25,6 +26,13 @@ static volatile AppPikaState_t s_state;
 static uint8_t s_inited;
 static const uint8_t *s_bytecode;
 static uint32_t s_bytecode_len;
+
+/* monitor 状态提供者：协议层经 Monitor_RegisterStateProvider 获取 Pika 运行状态，
+ * 使 protocol 层不依赖本模块的 AppPika_GetState */
+static const char *app_monitor_state_provider(void)
+{
+    return (AppPika_GetState() == APP_PIKA_STATE_RUNNING) ? "run" : "stop";
+}
 
 static int pika_magic_is_pyo(const uint8_t *data, uint32_t len)
 {
@@ -158,6 +166,7 @@ int AppPika_Start(void)
     s_stop_req = 0U;
     s_state = APP_PIKA_STATE_RUNNING;
 
+    Monitor_RegisterStateProvider(app_monitor_state_provider);
     set_event_enable("monitor_event");
     loader_remote_cfg();
     pid_line_follow_reset();

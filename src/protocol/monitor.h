@@ -73,4 +73,14 @@ bool monitor_generate_report(MonitorManager* manager);
 void monitor_output_report(MonitorManager* manager);
 														
 void monitor_call_back(void*arg);
+
+/* 状态提供者：业务层（Pika 运行时）注册，返回 "run"/"stop" 字符串，
+ * 使 protocol 层不依赖 business 的 Pika 状态 API（未注册时默认 "stop"） */
+typedef const char *(*MonitorStateProvider)(void);
+void Monitor_RegisterStateProvider(MonitorStateProvider cb);
+
+/* 上传暂停：由 ymodem 等业务流程调用，monitor 上传期间暂停发送 */
+void Monitor_SetUploadPaused(uint8_t paused);
+uint8_t Monitor_IsUploadPaused(void);
+
 #endif // __MONITOR_H

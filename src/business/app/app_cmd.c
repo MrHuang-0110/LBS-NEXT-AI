@@ -9,6 +9,7 @@
 #include "app_cmd.h"
 #include "cmd.h"
 #include "at.h"
+#include "monitor.h"
 #include "drv_comm.h"
 #include "event_manager.h"
 #include "app_pika_runtime.h"
@@ -23,18 +24,6 @@
 #include <stdio.h>
 
 #define USB_CMD_FW_UPDATE       "ymodem update fmware"
-
-static volatile uint8_t s_upload_paused;
-
-void AppMonitor_SetUploadPaused(uint8_t paused)
-{
-    s_upload_paused = (paused != 0U) ? 1U : 0U;
-}
-
-uint8_t AppMonitor_IsUploadPaused(void)
-{
-    return s_upload_paused;
-}
 
 static void app_ymodem_play_result_beep(uint8_t ok)
 {
@@ -59,7 +48,7 @@ static void app_run_ymodem(DrvCommPort_t port)
     }
     set_event_disable("monitor_event");
     Cmd_SetYmodemActive(1U);
-    AppMonitor_SetUploadPaused(1U);
+    Monitor_SetUploadPaused(1U);
     if (port == DRV_COMM_UART5)
     {
         DrvBtRing_SetPassthrough(1U);
@@ -84,7 +73,7 @@ static void app_run_ymodem(DrvCommPort_t port)
         (void)usb_printf("\r\nYMODEM FAIL (timeout/abort)\r\n");
     }
     app_ymodem_play_result_beep(ok);
-    AppMonitor_SetUploadPaused(0U);
+    Monitor_SetUploadPaused(0U);
     set_event_enable("monitor_event");
     DrvBtRing_SetPassthrough(0U);
     Cmd_SetYmodemActive(0U);
@@ -134,7 +123,7 @@ static void app_cmd_line_handler(const char *line, uint8_t port)
     if (strcmp(line, "ymodem") == 0)
     {
         set_event_disable("monitor_event");
-        AppMonitor_SetUploadPaused(1U);
+        Monitor_SetUploadPaused(1U);
         app_run_ymodem((DrvCommPort_t)port);
         return;
     }
@@ -167,7 +156,6 @@ void AppCmd_Init(void)
     Cmd_RegisterAction(0xBA, app_cmd_action_ba);
     Cmd_RegisterLineHandler(app_cmd_line_handler);
     At_Init();
-    s_upload_paused = 0U;
 }
 
 void AppCmd_SyncBtFromModule(void)

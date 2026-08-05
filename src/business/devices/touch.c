@@ -11,6 +11,13 @@ DEV_TOUCH *read_touch(void *self)
 	 return mt;
 }
 
+/* SensorBase.read_values 包装：填充统一读数（供 protocol 层经 device_pool 读取） */
+static void read_touch_values(void *self, DeviceReading_t *out)
+{
+    DEV_TOUCH *mt = (DEV_TOUCH *)self;
+    out->touch_state = mt->touchState;
+}
+
 void refsh_touch(void* self, void* data)
 { 
 	      
@@ -25,6 +32,7 @@ SensorBase *create_touch(void)
 	      
 				memset(touch,0,sizeof(DEV_TOUCH));
 				touch->base.type = DEVICE_TOUCH_ID;
+				touch->base.read_values = read_touch_values;
 				memset(touch->base.name,0,sizeof(touch->base.name));
 				strcpy(touch->base.name,"touch"); 
 				touch->touchState = 0;
