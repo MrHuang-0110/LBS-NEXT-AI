@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 /* ------------------------------------------------------------------ */
-/* 复制生产代码中的常量和 CRC32 (与 app_pika_script_flash.c 一致)     */
+/* 复制生产代码中的常量和 CRC32 (与 src/business/pika/app_pika_script_flash.c 一致) */
 /* ------------------------------------------------------------------ */
 
 #define APP_SCRIPT_FLASH_ADDR       0x08060000U
