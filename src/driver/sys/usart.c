@@ -5,6 +5,7 @@
 #include "frame.h"
 #include "device_pool.h"
 #include "drv_comm.h"
+#include "cmd.h"
 #include "stdarg.h"
 extern void usb_printf(char *fmt, ...);
 static UART_HandleTypeDef g_uart1_handle;  /* UART??? */
@@ -498,6 +499,9 @@ static void HAL_USART_IDLE_INTERRUPT(UART_HandleTypeDef *huart)
 				   if(dataAgreeAnalys(&frame,usart5dmaRxBufer,usart5dmaRxlength))
 					 { 
 						 set_sensor_parameter(getHubBase(8),(_AGREEMENT*)&frame);
+						 /* 蓝牙通道除设备数据(0xC1)外，指令帧(0xB6/0xB9/0xBE/0xBA)
+						  * 也进入统一命令分发，否则脚本启停等指令在蓝牙上不生效 */
+						 Cmd_ProcessFrame((_AGREEMENT*)&frame);
 					 }
 					 else
 					 { 

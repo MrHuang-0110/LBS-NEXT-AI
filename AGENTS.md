@@ -6,7 +6,7 @@
 
 嵌入式机器人/教学设备固件，目标芯片 **APM32E103RE**（Cortex-M3，512KB Flash / 128KB RAM），Keil µVision (MDK-ARM) + STM32F1 HAL 构建，集成 **PikaPython** 脚本运行时（Ymodem 下载字节码、运行时执行）。
 
-- 入口：`Users/main.c`；APP 链接于 `0x08008000`，前 32KB 为 Bootloader（不在本仓库）
+- 入口：`src/business/app/main.c`；APP 链接于 `0x08000000`（无 Bootloader，Keil 直烧；`SystemInit` 置 VTOR=`0x08000000`）
 - 硬件：电机 · 颜色传感器 · LED 点阵(TM1640) · 超声波 · 触摸 · 蜂鸣 · BLE
 - 文档入口：`README.md`（架构/协议/开发约定）、`docs/`（进度/坑/技术栈）
 
@@ -30,7 +30,7 @@
 - **调度**：协程/事件驱动，无 RTOS。TIM6 ISR → `event_schedlucer()` 按毫秒阈值调度 EVENT_MANAGER 回调（LED、IWDG、USB、ADC、按键、监控…）；`main()` 主循环轮询 `Monitor_Poll()`、`AppCmd_PollUsb/Bt()`。新增周期工作走 EVENT_MANAGER 条目，勿忙等。
 - **通信**：双通道 — USB CDC + 蓝牙 UART5，各自 ring buffer，帧协议 `0x5A|sID|oID|len|index|data|crc|0xA5`，`busDataparsing()`（`Users/app_cmd.c`）分发；Ymodem 用于固件升级 + Pika 字节码推送。
 - **PikaPython**：`Users/app_pika_runtime.c`；`pika_hook_instruct()` 每 N 条 VM 指令调用以保持调度器活跃；脚本启停 = 协议 0xB6/0xB9 或按键，**启动统一经 `start_py` 标志在 main() 主循环执行，严禁在 ISR 上下文启动 VM**。
-- **Flash 映射**：`0x08008000` APP / `0x08060000` 脚本区 32KB(CRC32) / `0x08078000` 用户配置页(BLE 配对+颜色校准，key `PKCL`/`ECB2`)。
+- **Flash 映射**：`0x08000000` APP / `0x08060000` 脚本区 32KB(CRC32) / `0x08078000` 用户配置页(BLE 配对+颜色校准，key `PKCL`/`ECB2`)。
 - **目录**：`Users/` APP 入口与分发 · `Drivers/BSP/` 外设驱动 · `Drivers/SYSTEM/` Alientek 系统层 · `application/` 功能模块(motor/blue/matrix/…) · `Middlewares/` ymodem/monitor/event_manager/fatfs/usb 等 · `python/` Pika 主机端 · `tools/` 部署脚本。
 
 ## Conventions

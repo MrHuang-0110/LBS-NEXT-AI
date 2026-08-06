@@ -1,4 +1,4 @@
-# 项目进度
+﻿# 项目进度
 
 > 维护：每次里程碑完成同步更新。本文件是唯一记忆系统的一部分（连同 pitfalls.md / tech-stack.md）。
 
@@ -35,7 +35,28 @@
 - **冗余治理**：蓝牙 AT 两套统一到 `protocol/at`（`75a4099`）、ADC 采样公共化（`3f30d4c`）、btim 空实现清理（`a0e8e01`）、遗留 .bak/死代码/空目录删除（`e64522f`）、中文注释编码修复（`dc66eb3`）
 - **验证**：全量编译 **0 Error(s), 0 Warning(s)**（Keil F7，`Output/atk_f103.bin` 生成）；host 测试 `tests/test_script_flash.c` **13/13 PASS**（gcc 编译零警告）；功能对照表见 `docs/refactor-function-mapping.md`
 
+## 2026-08-06 — 关机动画被按键事件干扰修复 ✅
+
+- **现象**：长按关机触发后，关机动画（GPIO 流水灯闪烁/逐个熄灭）被干扰——全部 LED 很暗地闪烁、拖 2 秒才关机，与重构前表现不一致
+- **根因**（两层）：
+  1. 重构后按键状态机移入 TIM6 ISR 的 `key_middle_event`（1ms 一次），关机序列阻塞播动画期间 ISR 照跑；长按触发后手指未松 → `press_start_time` 清零重计时 → `hold_progress` 回调持续上报 `lit=0→3→6→9` 循环，反复改写流水灯 GPIO，与关机动画抢控制权；松手还会触发 release 回调重新打开流水灯。重构前按键扫描在主循环、关机后 `while(1)` 死循环停止扫描，故无此问题
+  2. 隐藏 bug：`Event_t.name[16]` 装不下 16 字符事件名 `"key_middle_event"`（+`\0`=17B），`strcpy` 越界写导致 `find_event` 的 `strcmp` 永远失败 → `set_event_disable("key_middle_event")` 从未生效
+- **方案**：
+  - `event_manager.h`：`Event_t.name[16]` → `name[20]`；`enabled` 加 `volatile`（主循环写/ISR 读）
+  - `event_manager.c`：`strcpy` → `strncpy`（防未来事件名再越界）
+  - `app_shutdown_sequence()`：开头 `set_event_disable("key_middle_event")`，恢复重构前"关机后按键处理停止"行为
+- **验证**：新增 host 测试 `tests/test_shutdown_flow.c` **4/4 PASS**（含 16 字符事件名可禁用回归测试）；原有 13/13 仍 PASS；上板验证见待办
+
 ## 待办 / 风险
 
 - [ ] Keil F7 编译验证自定义散列文件（atk_f103_script.sct），烧录测试脚本持久化流程（手动）
+- [ ] 关机动画修复上板验证：长按关机时动画应干净播放不被干扰（手动）
 - [ ] 搁置 Bug：流水灯少一个灯（见 docs/pitfalls.md）
+
+## 2026-08-06 鈥?鍏虫満铚傞福銆滃緢灏忓０/鍝嶄笉璧锋潵"淇?鈽?
+- **鐜拌薄**锛氬叧鏈烘祦绋嬶紙LED 鍔ㄧ敾锛夋甯稿悗锛岀3 绉掑叧鏈烘棆寰嬪紑濮嬫挱鏀炬椂铚傞福鍣ㄥ嚑涔庢棤澹帮紝鍚彉"寰堝皬澹?鍝嶄笉璧锋潵"
+- **鏍瑰洜**锛歜eep_play_shutdown_melody_blocking 璧?beep_play_piano_melody锛屾瘡闊︾灏?motor_delay_exit(120) 闃诲涓?motor.c:64 鍐呴儴姣?1ms 鏌?VMSignal_getCtrl()==VM_SIGNAL_CTRL_EXIT 鍛藉腑绔嬪嵆 break锛涘叧鏈哄墠鑴氭湰琚?AppPika_Stop 鍋滄銆佹垨鍏虫満杩囩▼涓?USB/BT 鏀跺埌 0xB9 鍋滄鎸囦护 鈫?signal_ctrl 涓?EXIT 鈫?7 涓闊︾灏?0ms 鍏ㄩ儴缁撴潫锛岃€屼笖 pika_vmSignal_setCtrlClear 鍦ㄦ棆寰嬪墠宸叉竻 EXIT锛屼絾鏃犳硶闃叉鎾斁鏃跺啀娆¤绔?EXIT锛堝叧鏈轰腑 USB/BT 鏂囨湰鍛戒护缁?Cmd_ProcessFrame 鍙兘璁剧疆锛?
+- **鏂规**锛歜eep_play_shutdown_melody_blocking 鏀圭敤 beep_play_melody(鈥?84,659,523,392,330,262,196鈥?120)锛圚AL_Delay 绾樿寮忛樆濉★紝涓嶆鏌?VM 淇″彿锛夛紱G5,E5,C5,G4,E4,C4,G3 瀵瑰簲棰戠巼 784,659,523,392,330,262,196Hz
+- **楠岃瘉**锛氭柊澶?host 娴嬭瘯 tests/test_shutdown_melody.c 4/4 PASS锛涘師鏈?test_shutdown_flow 4/4銆乼est_script_flash 13/13 鍏ㄩ儴 PASS锛涗笂鏉块獙璇佽寰呭姙
+- **根因确认**（贤哥定位）：长按 1.5s 触发 tick 内，第三声进度蜂鸣（beep_play(BEEP_KEY_PRESS)，800Hz×30ms）刚启动，app_shutdown_sequence 开头立即 beep_stop() 把它掐成"哒"一声（且 beep_play 内部首行也会 beep_stop）；关机音效排在动画之后才播，时序错乱
+- **方案落地**（2026-08-06 定稿）：main.c app_shutdown_sequence 去掉开头 beep_stop，保存 Flash 后 while(beep_is_playing()) 等第三声自然播完（≤30ms），再 beep_play(BEEP_POWER_OFF) 非阻塞启动关机音效与动画（1500ms）同步播放，动画结束 beep_stop 兜底断电；beep.c power_off_sound 加长为 11 音符≈1300ms；删除死代码 beep_play_shutdown_melody_blocking；测试 tests/test_shutdown_melody.c 4/4 PASS，全量 4+4+13 PASS

@@ -79,12 +79,25 @@ static void disable_jtag_enable_swd(void)
 
 void app_shutdown_sequence(void)
 {
-    beep_stop();
+    /* 重构后按键状态机在 TIM6 ISR 的 key_middle_event 中每 1ms 扫描：
+     * 长按触发后手指未松，press_start_time 清零重计时，hold_progress 回调持续
+     * 改写流水灯 GPIO，与下方关机动画抢控制权（动画被干扰、闪烁混乱）；
+     * 松手还会触发 release 回调重新打开流水灯。故先禁用按键事件，
+     * 恢复重构前"关机后按键处理停止"的行为。 */
+    set_event_disable("key_middle_event");
+    /* 注意：此处不调 beep_stop()。长按 1.5s 触发 tick 内，第三声进度蜂鸣
+     * （beep_play(BEEP_KEY_PRESS)，800Hz×30ms）刚启动；立即 beep_stop() 会把它
+     * 掐成"哒"一声。保存 Flash 后若仍在播（Flash 无改动快速返回时 <30ms），
+     * 等它自然播完（beep_update 事件推进），再启动关机音效——
+     * beep_play 内部首行会 beep_stop()，若不等完第三声仍会被掐断。 */
     (void)AppPikaScriptFlash_SaveFromRam();   /* 关机前保存当前脚本到 Flash */
     DrvLed_SetFlowEnable(0U);
+    while (beep_is_playing()) { HAL_Delay(1); }   /* 等第三声播完（≤30ms） */
+    /* 关机音效与关机动画同步播放（beep_play 非阻塞，由 beep_update 事件驱动，
+     * 动画阻塞期间 TIM6 ISR 照常推进音效；动画结束前音效播完） */
+    beep_play(BEEP_POWER_OFF);
     DrvLed_PlayShutdownAnimationBlocking();
-    pika_vmSignal_setCtrlClear();
-    beep_play_shutdown_melody_blocking();
+    beep_stop();   /* 兜底：动画结束确保静音，再断电 */
     HAL_GPIO_WritePin(APP_PWR_CTRL_GPIO_PORT, APP_PWR_CTRL_GPIO_PIN, GPIO_PIN_RESET);
     while (1)
     {
@@ -116,9 +129,14 @@ static void app_key_short_press(void)
 
 static void app_key_release(void)
 {
-    /* 非短按释放（held >= 800ms 且未触发短按）：恢复流水灯，与原版释放分支一致 */
+    /* 非短按释放（held >= 800ms 且未触发短按）：恢复流水灯，与原版释放分支一致。
+     * 脚本运行期间保持关闭（AppPika_Start 已关灯提供干净环境），
+     * 避免按住超窗释放把流水灯重新点亮干扰脚本灯光控制 */
     s_hold_active = 0U;
-    DrvLed_SetFlowEnable(1U);
+    if (AppPika_GetState() != APP_PIKA_STATE_RUNNING)
+    {
+        DrvLed_SetFlowEnable(1U);
+    }
 }
 
 static void app_key_long_press(void)
@@ -189,11 +207,10 @@ static void systemInit(void)
     uart_dma_idle_start();
     uart_blue_idle_start();
     DrvLed_SetFlowEnable(1U);
-    set_event_enable("monitor_event");
-    btim_timx_int_start();
     adc_nch_dma_start();
-    /* Boot 跳转前 __disable_irq()，此处必须开中断，否则 SysTick/TIM6 不运行、HAL_GetTick 冻结 */
-    __enable_irq();
+    /* Boot 跳转前 __disable_irq()（若 Bootloader 未关中断，此行为保险），此处必须开中断，
+     * 否则 SysTick 不运行、HAL_GetTick 冻结；TIM6 调度器统一在下方所有初始化完成后启动 */
+     __enable_irq();
     delay_ms(DRV_BT_AT_GAP_MS);
     blue_init();
     (void)AppPikaScriptFlash_LoadToRam();   /* 若 Flash 有有效脚本, 装载到 RAM (不运行) */
@@ -205,6 +222,13 @@ static void systemInit(void)
     Key_RegisterHoldProgressCb(app_key_hold_progress);
     Key_RegisterReleaseCb(app_key_release);
     Key_EnableAfterBoot();
+
+    /* 最后启动 TIM6 调度器：event_register 默认全部 enable，TIM6 一旦启动，
+     * event_schedlucer 每 1ms 触发 monitor/key_middle/usb_receive 等回调；
+     * 若在 USB 枚举、blue_init、按键回调注册完成前启动，回调会访问未就绪数据
+     * 导致跑飞（PC=0xA0000000），故统一放在所有业务初始化完成之后。 */
+    btim_timx_int_start();
+    set_event_enable("monitor_event");
 }
 
 int main(void)

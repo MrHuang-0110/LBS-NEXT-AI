@@ -3,8 +3,8 @@
 ; *** 预留 0x08060000-0x08067FFF 给脚本持久化区               ***
 ; *************************************************************
 
-LR_IROM1 0x08008000 0x00078000  {    ; load region (APP start to user config)
-  ER_IROM1 0x08008000 0x00058000  {  ; 0x08008000-0x08060000 (352KB)
+LR_IROM1 0x08000000 0x00078000  {    ; load region (APP start to user config)
+  ER_IROM1 0x08000000 0x00058000  {  ; 0x08000000-0x08060000 (384KB)
    *.o (RESET, +First)
    *(InRoot$$Sections)
    .ANY (+RO)

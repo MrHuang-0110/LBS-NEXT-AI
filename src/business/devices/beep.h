@@ -98,6 +98,5 @@ uint16_t beep_get_note_frequency(NoteName note, uint8_t octave);
 // notes: 音符字符串，逗号分隔的音符列表，例如 "C4,E4,G4"
 // beat_ms: 每个音符的持续时间（毫秒）
 void beep_play_piano_melody(const char* notes, uint16_t beat_ms);
-void beep_play_shutdown_melody_blocking(void);
 
 #endif /* __BEEP_H */

@@ -40,12 +40,19 @@ static const BeepTone power_on_sound[] = {
     {0, 0}        // 结束标记
 };
 
-// 关机音效：下降音阶，平滑关闭
+// 关机音效：下降音阶，与关机动画（约 1.5s：闪烁 480ms + 全亮 120ms + 逐个熄灭 900ms）同步
 static const BeepTone power_off_sound[] = {
-    {1047, 100},  // C6
-    {784, 100},   // G5
-    {659, 100},   // E5
-    {523, 150},   // C5
+    {784, 160},   // G5  闪烁阶段（6×80ms≈480ms，前 3 段）
+    {698, 160},   // F5
+    {659, 160},   // E5
+    {587, 120},   // D5  全亮（120ms）
+    {523, 100},   // C5  逐个熄灭阶段（9×100ms=900ms，后 5 段）
+    {494, 100},   // B4
+    {440, 100},   // A4
+    {392, 100},   // G4
+    {330, 100},   // E4
+    {262, 100},   // C4
+    {196, 100},   // G3
     {0, 0}        // 结束标记
 };
 
@@ -547,9 +554,4 @@ void beep_play_piano_melody(const char* notes, uint16_t beat_ms) {
 
     // 播放结束后静音
     play_frequency(0);
-}
-
-void beep_play_shutdown_melody_blocking(void)
-{
-    beep_play_piano_melody("G5,E5,C5,G4,E4,C4,G3", 120);
 }

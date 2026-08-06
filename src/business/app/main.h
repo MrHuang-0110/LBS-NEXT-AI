@@ -26,7 +26,7 @@
 #include "device_pool.h"
 #include "motor.h"
 #include "beep.h"
-#define APP_START_ADDR      0x08008000
+#define APP_START_ADDR      0x08000000      /* 无 Bootloader，APP 从 Flash 起始运行 */
 
 /* PC5：电源保持，拉高维持供电（与 Boot PWR_CTRL 一致） */
 #define APP_PWR_CTRL_GPIO_PORT      GPIOC

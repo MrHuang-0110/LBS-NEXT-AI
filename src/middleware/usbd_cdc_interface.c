@@ -307,21 +307,32 @@ void usb_event_receive_callback(void *arg) {
 	  USB_MESSAGE_BOX *message = (USB_MESSAGE_BOX*)arg;
 	  if(message == NULL)return;
 	  uint8_t *data = message->g_user_usb_rx_buffer;
-	  message->g_sys_usb_rx_len = message->g_user_usb_rx_len;
-	  while (message->g_user_usb_rx_len--){
+	  uint16_t rx_len = message->g_user_usb_rx_len;
+	  while (rx_len--){
       if(frame_parser_process_byte(&message->usb_parser, *data++)){
+				/* 用 parser 已解析出的完整帧（buffer+index）做二次解析，
+				 * 而非整批 buffer：一次 USB 接收可能含前导字节/多帧合并，
+				 * 用整批长度解析会因长度/CRC 不匹配把指令帧全部丢弃 */
 				_AGREEMENT frame;
-				if(dataAgreeAnalys(&frame,message->g_user_usb_rx_buffer,message->g_sys_usb_rx_len) == AGREE_MEN_OK)
+				if(dataAgreeAnalys(&frame,message->usb_parser.buffer,message->usb_parser.index) == AGREE_MEN_OK)
 			 {
 					if (s_usb_frame_handler != NULL)
 					{
 						s_usb_frame_handler(&frame, cdc_vcp_data_tx);
 					}
 			 }
+				/* 复位状态机以继续解析后续字节（保留已 malloc 的 buffer，
+				 * 避免每次 frame_parser_init 重新 malloc/free）。
+				 * 注意：不重置 calc_checksum/expected_length——下一帧 STATE_IDLE
+				 * 遇 0x5A 会重建 checksum，STATE_DEST_ID 会覆盖 expected_length；
+				 * 若未来调整状态机，此依赖须同步评估 */
+				message->usb_parser.state = STATE_IDLE;
+				message->usb_parser.index = 0U;
+				message->usb_parser.data_bytes_received = 0U;
+				message->usb_parser.frame_valid = false;
      }
 	 }
-		frame_parser_init(&message->usb_parser);
-    reset_usb_parser();
+		reset_usb_parser();   /* 内含 frame_parser_init：清空接收缓冲并重置解析器 */
     set_event_disable("usb_receive");
 }
  

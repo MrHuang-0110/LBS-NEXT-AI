@@ -108,8 +108,11 @@
 #else
 #define VECT_TAB_BASE_ADDRESS   FLASH_BASE      /*!< Vector Table base address field.
                                                      This value must be a multiple of 0x200. */
-#define VECT_TAB_OFFSET         0x00008000U     /*!< APP @ 0x08008000, Boot 占 32KB */
-//#define VECT_TAB_OFFSET         0x00000000U
+#define VECT_TAB_OFFSET         0x00000000U     /*!< 无 Bootloader：APP 链接于 0x08000000（Keil 直烧），
+                                                     向量表在 Flash 起始，SystemInit 置 VTOR = 0x08000000 */
+//#define VECT_TAB_OFFSET         0x00008000U    /*!< 旧布局：APP @ 0x08008000（Boot 占 32KB），
+//                                                     VTOR=0x08008000 会导致中断向量从 0x08008000 错位读取，
+//                                                     表现为初始化阶段中断触发即跑飞（PC 跳到代码数据区） */
 #endif /* VECT_TAB_SRAM */
 #endif /* USER_VECT_TAB_ADDRESS */
 

@@ -29,7 +29,7 @@ uint32_t event_register(char *name,uint32_t threshold_ticks, void (*callback)(vo
     uint32_t id = event_count + 1;
     
 	  memset(event_list[event_count].name,0,sizeof(event_list[event_count].name));
-	  strcpy(event_list[event_count].name,name);
+	  strncpy(event_list[event_count].name,name,sizeof(event_list[event_count].name) - 1U);
 	
     event_list[event_count].id = id;
     event_list[event_count].threshold_ticks = threshold_ticks; 

@@ -44,9 +44,8 @@
 ## 内存布局
 
 ```
-0x08000000 ─────────────────────────────  Bootloader (32KB, 不在本仓库)
-0x08008000 ─────────────────────────────  APP 入口 (向量表重定位)
-0x08008000  ├── ER_IROM1 (352KB) ───────  APP 代码区
+0x08000000 ─────────────────────────────  APP 入口 (向量表, VTOR=0x08000000)
+0x08000000  ├── ER_IROM1 (352KB) ───────  APP 代码区
 0x08060000  ├── 脚本持久化区 (32KB) ─────  单槽, CRC32 校验
 0x08068000  ├── ER_IROM2 (64KB) ────────  APP 代码区 (溢出)
 0x08078000  ├── 用户配置页 (2KB) ────────  BLE 配对 + 颜色校准
@@ -54,7 +53,7 @@
 0x20000000 ─────────────────────────────  RAM (128KB)
 ```
 
-> 设备上电从 Bootloader 启动，Bootloader 验证后跳转到 `0x08008000`。APP 入口调用 `sys_nvic_set_vector_table(FLASH_BASE, 0x8000)` 重定位向量表。
+> 无 Bootloader：APP 链接于 `0x08000000`，Keil 直接烧录。`SystemInit()`（startup 阶段、main 之前）置 `SCB->VTOR = 0x08000000`，中断向量表位于 Flash 起始。
 
 ---
 
@@ -81,15 +80,7 @@ pip install pyserial
 
 ### 烧录固件
 
-通过 Bootloader Ymodem 协议升级 APP 固件：
-
-```bash
-# USB CDC 烧录 (1KB STX 块)
-python tools/lbs_fw_update.py -p COM30 -f Output/atk_f103.bin
-
-# 蓝牙 UART 烧录 (128B SOH 块)
-python tools/lbs_fw_update.py -p COM7 --bt -f Output/atk_f103.bin
-```
+当前无 Bootloader，**仅支持 Keil 直接下载**（Flash 起始 `0x08000000`）。`tools/lbs_fw_update.py` 的 Ymodem 升级依赖 Bootloader 接收，当前不可用；后续若引入 Bootloader 再启用。
 
 > Keil After Build 会自动弹出烧录提示。USB 串口号在 `tools/deploy_port.txt` 中配置。
 

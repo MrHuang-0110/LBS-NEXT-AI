@@ -171,6 +171,10 @@ int AppPika_Start(void)
     s_stop_req = 0U;
     s_state = APP_PIKA_STATE_RUNNING;
 
+    /* 脚本运行期间关闭 GPIO 流水灯，避免与 Python 侧灯光控制（set_point_matrix 等）
+     * 抢占 LED，提供干净运行环境；脚本停止后由下方统一恢复流水灯 */
+    DrvLed_SetFlowEnable(0U);
+
     Monitor_RegisterStateProvider(app_monitor_state_provider);
     set_event_enable("monitor_event");
     loader_remote_cfg();

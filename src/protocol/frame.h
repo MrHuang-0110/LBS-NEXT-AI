@@ -29,7 +29,7 @@ enum
 #define DEST_ID         0x98
 #define FRAME_FOOTER    0xA5
 #define MAX_FRAME_SIZE  300  // 最大帧长度
-#define MIN_FRAME_SIZE  8    // 最小帧长度 (头+源+目标+长度+类型+校验+尾)
+#define MIN_FRAME_SIZE  7    // 最小帧长度 (头+源+目标+长度+类型+校验+尾 = 7, 对应 len=0 帧)
 
 typedef enum {
     STATE_IDLE,         // 空闲状态

@@ -12,11 +12,20 @@ static uint8_t calculate_checksum(const uint8_t *data, size_t length) {
 
 uint8_t dataAgreeAnalys(_AGREEMENT *_agreement_,uint8_t *data,uint16_t length)
 { 
+  /* 先查最小长度再解引用 data，避免 length 过短时越界读 data[length-1]。
+   * MIN_FRAME_SIZE=7 对应 len=0 的无数据帧（0xB6/0xB9/0xBE/0xBA 等指令帧），
+   * 旧值 8 会把这类 7 字节指令帧全部拒绝，导致 USB/蓝牙脚本启停指令不生效。 */
+  if(length < MIN_FRAME_SIZE)
+	  return AGREE_MEN_ERROR;
+
+  /* 防截断帧：声明的数据长度不得超出实际帧长。完整帧 = 7 + data[3]
+   *（5A|sID|oID|len|idx 5 字节 + data + crc|0xA5 2 字节），故 data[3] <= length-7；
+   * 否则 memcpy 会把 crc/0xA5 乃至帧外字节当数据喂给 set_sensor_parameter/Cmd_ProcessFrame */
+  if(data[3] > (length - 7U))
+	  return AGREE_MEN_ERROR;
+
   if(data[0] != 0x5A || data[length - 1] != 0xA5)
    	  return AGREE_MEN_ERROR;
-
-   if(length <8)
-		  return AGREE_MEN_ERROR;
 
 	 static uint8_t _mycrc_;
    _mycrc_ = calculate_checksum((const uint8_t *)data,length - 2);
